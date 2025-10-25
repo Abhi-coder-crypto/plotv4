@@ -33,7 +33,9 @@ Preferred communication style: Simple, everyday language.
 - **Schema Design**: TypeScript interfaces and Zod validation schemas shared between frontend and backend.
 
 ### System Design Choices
+- **Real-Time Updates**: WebSocket implementation with JWT authentication for instant data synchronization across all connected clients. Uses SESSION_SECRET environment variable with fail-fast security validation. Automatic query cache invalidation ensures UI updates without page refreshes.
 - **Comprehensive Analytics**: Advanced admin dashboard with 8 KPI cards, date range filters, salesperson leaderboard, daily/monthly performance charts, lead source distribution, plot category occupancy, real-time activity timeline, and comprehensive call logs section displaying all salesperson call activities.
+- **Contact Activity Tracking**: Detailed "Leads Contacted by Salesperson" section showing which specific leads were contacted, including call count, last contact time, and assigned salesperson information.
 - **Projects & Plots Management**: Hierarchical table structure for projects, showing plot details, buyer interest counts, highest offers, and assigned salespersons. Category-based plot filtering (Investment Plot, Bungalow Plot, Residential Plot, Commercial Plot, Open Plot).
 - **Lead Management**: Enhanced lead creation and editing forms with project/plot interest capture, optional highest offer, and salesperson assignment. Integration of LeadInterest with BuyerInterest for comprehensive tracking.
 - **Call Logging System**: Salespersons can log call activities for assigned leads with call status, duration, notes, and next follow-up dates. All call logs are visible to admins in the analytics dashboard with real-time updates. When logging a call with a next follow-up date, the lead's follow-up date is automatically updated.
