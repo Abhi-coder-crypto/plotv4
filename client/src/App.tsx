@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationBell } from "@/components/notification-bell";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
 import Login from "@/pages/login";
@@ -90,7 +91,7 @@ export default function App() {
 }
 
 function AppContent({ style }: { style: any }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [location] = useLocation();
 
   if (!isAuthenticated || location === "/login") {
@@ -104,7 +105,10 @@ function AppContent({ style }: { style: any }) {
         <div className="flex flex-col flex-1 overflow-hidden">
           <header className="flex items-center justify-between px-6 py-3 border-b border-border bg-background sticky top-0 z-10">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              {!isAdmin && <NotificationBell />}
+              <ThemeToggle />
+            </div>
           </header>
           <main className="flex-1 overflow-y-auto p-6 bg-background">
             <Router />

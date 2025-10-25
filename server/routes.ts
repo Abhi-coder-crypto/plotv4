@@ -1093,7 +1093,7 @@ export function registerRoutes(app: Express) {
         nextFollowUpDate: nextFollowUpDate ? new Date(nextFollowUpDate) : undefined,
       });
 
-      if (callStatus === "Contacted" || callStatus === "Called - Answered") {
+      if (callStatus === "Called - Answered") {
         await LeadModel.findByIdAndUpdate(leadId, {
           status: "Contacted",
         });

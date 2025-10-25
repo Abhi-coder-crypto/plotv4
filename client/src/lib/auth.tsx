@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useLocation } from "wouter";
+import { queryClient } from "@/lib/queryClient";
 import type { AuthResponse, UserRole } from "@shared/schema";
 
 interface AuthUser {
@@ -52,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    queryClient.clear(); // Clear all cached queries on logout
     setLocation("/login");
   };
 
