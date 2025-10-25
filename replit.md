@@ -28,13 +28,15 @@ Preferred communication style: Simple, everyday language.
     - **Plot**: Individual plots with details like size, price, status (Available/Booked/Hold/Sold), and category.
     - **BuyerInterest**: Tracks potential buyers for plots, including offered price and assigned salesperson.
     - **Payment**: Booking payments with amount, mode, and type.
+    - **CallLog**: Records salesperson call activities with lead details, call status (Interested/Not Interested/Call Back/Meeting Scheduled), duration, notes, and next follow-up date.
     - **ActivityLog**: Audit trail of user actions.
 - **Schema Design**: TypeScript interfaces and Zod validation schemas shared between frontend and backend.
 
 ### System Design Choices
-- **Comprehensive Analytics**: Advanced admin dashboard with 8 KPI cards, date range filters, salesperson leaderboard, daily/monthly performance charts, lead source distribution, plot category occupancy, and real-time activity timeline.
+- **Comprehensive Analytics**: Advanced admin dashboard with 8 KPI cards, date range filters, salesperson leaderboard, daily/monthly performance charts, lead source distribution, plot category occupancy, real-time activity timeline, and comprehensive call logs section displaying all salesperson call activities.
 - **Projects & Plots Management**: Hierarchical table structure for projects, showing plot details, buyer interest counts, highest offers, and assigned salespersons. Category-based plot filtering (Investment Plot, Bungalow Plot, Residential Plot, Commercial Plot, Open Plot).
 - **Lead Management**: Enhanced lead creation and editing forms with project/plot interest capture, optional highest offer, and salesperson assignment. Integration of LeadInterest with BuyerInterest for comprehensive tracking.
+- **Call Logging System**: Salespersons can log call activities for assigned leads with call status, duration, notes, and next follow-up dates. All call logs are visible to admins in the analytics dashboard with real-time updates.
 - **Data Export**: CSV/Excel export functionality for analytics and filtered lead data.
 
 ## External Dependencies
