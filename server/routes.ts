@@ -1165,6 +1165,28 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.get("/api/missed-followups", authenticateToken, async (req, res) => {
+    try {
+      const authReq = req as AuthRequest;
+      const today = new Date();
+      
+      // Find leads assigned to this salesperson with follow-up dates in the past
+      const missedFollowUps = await LeadModel.find({
+        assignedTo: authReq.user!._id,
+        followUpDate: { $lt: today },
+        status: { $nin: ["Booked", "Lost"] }, // Exclude completed or lost leads
+      })
+        .select("_id name phone email followUpDate status rating")
+        .sort({ followUpDate: 1 })
+        .limit(50);
+
+      res.json(missedFollowUps);
+    } catch (error: any) {
+      console.error("Get missed follow-ups error:", error);
+      res.status(500).json({ message: "Failed to fetch missed follow-ups" });
+    }
+  });
+
   // ============= Activity Routes =============
   app.get("/api/activities", authenticateToken, async (req, res) => {
     try {
