@@ -36,7 +36,8 @@ Preferred communication style: Simple, everyday language.
 - **Comprehensive Analytics**: Advanced admin dashboard with 8 KPI cards, date range filters, salesperson leaderboard, daily/monthly performance charts, lead source distribution, plot category occupancy, real-time activity timeline, and comprehensive call logs section displaying all salesperson call activities.
 - **Projects & Plots Management**: Hierarchical table structure for projects, showing plot details, buyer interest counts, highest offers, and assigned salespersons. Category-based plot filtering (Investment Plot, Bungalow Plot, Residential Plot, Commercial Plot, Open Plot).
 - **Lead Management**: Enhanced lead creation and editing forms with project/plot interest capture, optional highest offer, and salesperson assignment. Integration of LeadInterest with BuyerInterest for comprehensive tracking.
-- **Call Logging System**: Salespersons can log call activities for assigned leads with call status, duration, notes, and next follow-up dates. All call logs are visible to admins in the analytics dashboard with real-time updates.
+- **Call Logging System**: Salespersons can log call activities for assigned leads with call status, duration, notes, and next follow-up dates. All call logs are visible to admins in the analytics dashboard with real-time updates. When logging a call with a next follow-up date, the lead's follow-up date is automatically updated.
+- **Notification System**: Real-time notification bell for salespersons showing missed follow-ups. Badge displays count of overdue leads, dropdown shows detailed list with lead information. Notifications refresh every minute and clear on logout.
 - **Data Export**: CSV/Excel export functionality for analytics and filtered lead data.
 
 ## External Dependencies
