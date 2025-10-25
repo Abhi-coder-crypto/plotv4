@@ -12,6 +12,7 @@ import {
   CallLogModel,
 } from "./models";
 import { authenticateToken, requireAdmin, generateToken, type AuthRequest } from "./middleware/auth";
+import { broadcastUpdate, wsEvents } from "./websocket";
 import type { AuthResponse, DashboardStats, SalespersonStats } from "@shared/schema";
 import {
   loginSchema,
@@ -295,6 +296,19 @@ export function registerRoutes(app: Express) {
         details: `Created lead for ${lead.name}${projectId ? ' with project interest' : ''}`,
       });
 
+      broadcastUpdate(wsEvents.LEAD_CREATED, {
+        leadId: lead._id,
+        assignedTo: lead.assignedTo,
+      });
+
+      if (projectId && plotIds && plotIds.length > 0) {
+        broadcastUpdate(wsEvents.LEAD_INTEREST_CREATED, {
+          leadId: lead._id,
+          projectId,
+          plotIds,
+        });
+      }
+
       res.status(201).json(lead);
     } catch (error: any) {
       console.error("Create lead error:", error);
@@ -334,6 +348,11 @@ export function registerRoutes(app: Express) {
         entityType: "lead",
         entityId: lead._id,
         details: `Assigned lead ${lead.name} to ${salesperson?.name}`,
+      });
+
+      broadcastUpdate(wsEvents.LEAD_ASSIGNED, {
+        leadId: lead._id,
+        salespersonId,
       });
 
       res.json(lead);
@@ -605,6 +624,12 @@ export function registerRoutes(app: Express) {
         entityType: "lead",
         entityId: leadId,
         details: `Added interest for ${lead.name} in ${project.name}`,
+      });
+
+      broadcastUpdate(wsEvents.LEAD_INTEREST_CREATED, {
+        leadId,
+        projectId,
+        plotIds,
       });
 
       const populatedInterest = await LeadInterestModel.findById(interest._id)
@@ -1065,6 +1090,18 @@ export function registerRoutes(app: Express) {
         details: `Booked plot ${plot?.plotNumber} for ${lead?.name} - ₹${amount}`,
       });
 
+      broadcastUpdate(wsEvents.PAYMENT_CREATED, {
+        paymentId: payment._id,
+        leadId,
+        plotId,
+      });
+
+      broadcastUpdate(wsEvents.PLOT_UPDATED, {
+        plotId,
+      });
+
+      broadcastUpdate(wsEvents.METRICS_UPDATED, {});
+
       res.status(201).json(payment);
     } catch (error: any) {
       console.error("Create payment error:", error);
@@ -1117,6 +1154,17 @@ export function registerRoutes(app: Express) {
         entityType: "lead",
         entityId: leadId,
         details: `${callStatus} - ${lead?.name || 'Lead'}`,
+      });
+
+      broadcastUpdate(wsEvents.CALL_LOG_CREATED, {
+        callLogId: callLog._id,
+        leadId,
+        salespersonId: authReq.user!._id,
+        callStatus,
+      });
+
+      broadcastUpdate(wsEvents.METRICS_UPDATED, {
+        salespersonId: authReq.user!._id,
       });
 
       res.status(201).json(callLog);
