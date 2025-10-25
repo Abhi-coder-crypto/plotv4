@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/notification-bell";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
+import { WebSocketProvider } from "@/lib/websocket";
 import Login from "@/pages/login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import SalespersonDashboard from "@/pages/salesperson-dashboard";
@@ -80,10 +81,12 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <TooltipProvider>
-            <AppContent style={style} />
-            <Toaster />
-          </TooltipProvider>
+          <WebSocketProvider>
+            <TooltipProvider>
+              <AppContent style={style} />
+              <Toaster />
+            </TooltipProvider>
+          </WebSocketProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

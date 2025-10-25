@@ -4,6 +4,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { connectDB } from "./db";
 import { seedDatabase } from "./seed";
+import { setupWebSocket } from "./websocket";
 
 const app = express();
 
@@ -54,8 +55,11 @@ app.use((req, res, next) => {
   await connectDB();
   // await seedDatabase(); // Commented out to preserve October 2025 data
   
-  registerRoutes(app);
   const server = createServer(app);
+  
+  setupWebSocket(server);
+  
+  registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
