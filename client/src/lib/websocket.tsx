@@ -22,8 +22,14 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
 
   const connect = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No authentication token found, skipping WebSocket connection");
+      return;
+    }
+
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const wsUrl = `${protocol}//${window.location.host}/ws?token=${encodeURIComponent(token)}`;
 
     try {
       const ws = new WebSocket(wsUrl);
@@ -94,17 +100,23 @@ function handleWebSocketMessage(message: any) {
     case "lead:deleted":
     case "lead:assigned":
       queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/salesperson"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/salesperson/detailed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["/api/leads/today-followups"] });
       queryClient.invalidateQueries({ queryKey: ["/api/missed-followups"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/leads/contacted"] });
       break;
 
     case "callLog:created":
       if (message.data?.leadId) {
         queryClient.invalidateQueries({ queryKey: ["/api/call-logs/lead", message.data.leadId] });
       }
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/salesperson"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/salesperson/detailed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/leads/contacted"] });
       break;
 
     case "plot:created":
@@ -145,6 +157,8 @@ function handleWebSocketMessage(message: any) {
       break;
 
     case "metrics:updated":
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/salesperson"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/salesperson/detailed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["/api/analytics"] });
       break;

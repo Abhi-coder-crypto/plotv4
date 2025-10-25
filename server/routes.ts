@@ -252,6 +252,24 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.get("/api/leads/contacted", authenticateToken, async (req, res) => {
+    try {
+      const authReq = req as AuthRequest;
+      const query = authReq.user!.role === "admin"
+        ? { status: "Contacted" }
+        : { assignedTo: authReq.user!._id, status: "Contacted" };
+
+      const leads = await LeadModel.find(query)
+        .populate("assignedTo", "name email")
+        .sort({ updatedAt: -1 })
+        .limit(20);
+      res.json(leads);
+    } catch (error: any) {
+      console.error("Get contacted leads error:", error);
+      res.status(500).json({ message: "Failed to fetch contacted leads" });
+    }
+  });
+
   app.post("/api/leads", authenticateToken, async (req, res) => {
     try {
       const validationResult = insertLeadSchema.safeParse(req.body);

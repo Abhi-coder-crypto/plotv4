@@ -1,11 +1,45 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { Server } from "http";
 import { log } from "./vite";
+import type { IncomingMessage } from "http";
+import jwt from "jsonwebtoken";
 
 let wss: WebSocketServer | null = null;
 
+const JWT_SECRET = process.env.SESSION_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error("SESSION_SECRET environment variable is required");
+}
+
 export function setupWebSocket(server: Server) {
-  wss = new WebSocketServer({ server, path: "/ws" });
+  wss = new WebSocketServer({ noServer: true });
+
+  server.on("upgrade", (request: IncomingMessage, socket, head) => {
+    const { pathname, searchParams } = new URL(request.url!, `http://${request.headers.host}`);
+    
+    if (pathname === "/ws") {
+      const token = searchParams.get("token") || 
+                     request.headers.authorization?.replace("Bearer ", "");
+
+      if (!token) {
+        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+        socket.destroy();
+        return;
+      }
+
+      try {
+        jwt.verify(token, JWT_SECRET!);
+        
+        wss!.handleUpgrade(request, socket, head, (ws) => {
+          wss!.emit("connection", ws, request);
+        });
+      } catch (error) {
+        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+        socket.destroy();
+      }
+    }
+  });
 
   wss.on("connection", (ws: WebSocket) => {
     log("WebSocket client connected");
@@ -21,6 +55,7 @@ export function setupWebSocket(server: Server) {
     ws.send(JSON.stringify({ type: "connected", message: "Connected to real-time updates" }));
   });
 
+  log("WebSocket server initialized on path /ws");
   return wss;
 }
 

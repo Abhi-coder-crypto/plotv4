@@ -57,6 +57,10 @@ export default function SalespersonDashboard() {
     queryKey: ["/api/leads/today-followups"],
   });
 
+  const { data: contactedLeads, isLoading: contactedLoading } = useQuery<Lead[]>({
+    queryKey: ["/api/leads/contacted"],
+  });
+
   const getRatingColor = (rating: string) => {
     switch (rating) {
       case "Urgent": return "bg-chart-3 text-white";
@@ -143,6 +147,19 @@ export default function SalespersonDashboard() {
                   <MetricCard icon={TrendingUp} label="Interested" value={detailedMetrics?.dailyMetrics.interested || 0} color="text-yellow-500" />
                   <MetricCard icon={Target} label="Converted" value={detailedMetrics?.dailyMetrics.conversions || 0} color="text-green-500" />
                 </div>
+                {contactedLeads && contactedLeads.length > 0 && (
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Recently Contacted Leads</p>
+                    <div className="space-y-2">
+                      {contactedLeads.slice(0, 5).map((lead) => (
+                        <div key={lead._id} className="flex items-center justify-between text-sm p-2 rounded bg-muted/50">
+                          <span className="font-medium">{lead.name}</span>
+                          <span className="text-muted-foreground text-xs">{lead.phone}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </TabsContent>
               
               <TabsContent value="weekly" className="space-y-4 mt-4">
