@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Search, Filter, Edit, Trash2, UserPlus, Eye, Repeat, Download, FileSpreadsheet } from "lucide-react";
+import { Plus, Search, Filter, Edit, Trash2, UserPlus, Eye, Repeat, Download, FileSpreadsheet, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -45,12 +45,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { Lead, User, InsertLead, Project, Plot, PopulatedUser } from "@shared/schema";
+import type { Lead, User, InsertLead, Project, Plot, PopulatedUser, InsertCallLog, CallLog } from "@shared/schema";
 import { exportToCSV, exportToExcel } from "@/lib/csv-export";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertLeadSchema, leadSources, leadStatuses, leadRatings } from "@shared/schema";
+import { insertLeadSchema, leadSources, leadStatuses, leadRatings, insertCallLogSchema, callStatuses } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -69,6 +69,7 @@ export default function Leads() {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false);
+  const [isCallLogDialogOpen, setIsCallLogDialogOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [selectedPlotIds, setSelectedPlotIds] = useState<string[]>([]);
@@ -133,6 +134,17 @@ export default function Leads() {
       plotIds: [],
       assignedTo: "",
       highestOffer: 0,
+    },
+  });
+
+  const callLogForm = useForm<InsertCallLog>({
+    resolver: zodResolver(insertCallLogSchema),
+    defaultValues: {
+      leadId: "",
+      callStatus: "Called - No Answer",
+      callDuration: 0,
+      notes: "",
+      nextFollowUpDate: "",
     },
   });
 
@@ -204,6 +216,22 @@ export default function Leads() {
       toast({ title: "Lead transferred successfully" });
       setIsTransferDialogOpen(false);
       setSelectedLead(null);
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const callLogMutation = useMutation({
+    mutationFn: (data: InsertCallLog) => apiRequest("POST", "/api/call-logs", data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/call-logs"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/call-logs/all"] });
+      toast({ title: "Call logged successfully" });
+      setIsCallLogDialogOpen(false);
+      setSelectedLead(null);
+      callLogForm.reset();
     },
     onError: (error: any) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -294,6 +322,22 @@ export default function Leads() {
     if (selectedLead) {
       updateMutation.mutate({ id: selectedLead._id, data });
     }
+  };
+
+  const handleLogCall = (lead: Lead) => {
+    setSelectedLead(lead);
+    callLogForm.reset({
+      leadId: lead._id,
+      callStatus: "Called - No Answer",
+      callDuration: 0,
+      notes: "",
+      nextFollowUpDate: "",
+    });
+    setIsCallLogDialogOpen(true);
+  };
+
+  const handleCallLogSubmit = (data: InsertCallLog) => {
+    callLogMutation.mutate(data);
   };
 
   const handleExportLeads = (exportFormat: "csv" | "excel") => {
@@ -421,17 +465,27 @@ export default function Leads() {
                     <Eye className="h-3 w-3" />
                   </Button>
                   {!isAdmin && lead.assignedTo && String(typeof lead.assignedTo === 'object' ? (lead.assignedTo as PopulatedUser)._id : lead.assignedTo) === user?._id && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedLead(lead);
-                        setIsTransferDialogOpen(true);
-                      }}
-                      data-testid={`button-transfer-${lead._id}`}
-                    >
-                      <Repeat className="h-3 w-3" />
-                    </Button>
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleLogCall(lead)}
+                        data-testid={`button-log-call-${lead._id}`}
+                      >
+                        <Phone className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedLead(lead);
+                          setIsTransferDialogOpen(true);
+                        }}
+                        data-testid={`button-transfer-${lead._id}`}
+                      >
+                        <Repeat className="h-3 w-3" />
+                      </Button>
+                    </>
                   )}
                   <Button
                     size="sm"
@@ -1317,6 +1371,121 @@ export default function Leads() {
               </Select>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Call Log Dialog */}
+      <Dialog open={isCallLogDialogOpen} onOpenChange={setIsCallLogDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Log Call</DialogTitle>
+            <DialogDescription>
+              Record your call with {selectedLead?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...callLogForm}>
+            <form onSubmit={callLogForm.handleSubmit(handleCallLogSubmit)} className="space-y-4">
+              <FormField
+                control={callLogForm.control}
+                name="callStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Call Status</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-call-status">
+                          <SelectValue placeholder="Select call status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {callStatuses.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={callLogForm.control}
+                name="callDuration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Call Duration (minutes)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        data-testid="input-call-duration"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={callLogForm.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Add call notes..."
+                        {...field}
+                        rows={4}
+                        data-testid="textarea-call-notes"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={callLogForm.control}
+                name="nextFollowUpDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Next Follow-up Date</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="datetime-local"
+                        {...field}
+                        data-testid="input-next-followup"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsCallLogDialogOpen(false)}
+                  data-testid="button-cancel-call-log"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={callLogMutation.isPending}
+                  data-testid="button-submit-call-log"
+                >
+                  {callLogMutation.isPending ? "Saving..." : "Save Call Log"}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>

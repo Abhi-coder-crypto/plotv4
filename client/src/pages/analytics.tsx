@@ -9,6 +9,7 @@ import type {
   ActivityTimeline,
   LeadSourceAnalysis,
   PlotCategoryPerformance,
+  CallLog,
 } from "@shared/schema";
 import {
   Card,
@@ -132,6 +133,10 @@ export default function AnalyticsPage() {
 
   const { data: plotPerformance, isLoading: plotLoading } = useQuery<PlotCategoryPerformance[]>({
     queryKey: ["/api/analytics/plot-category-performance"],
+  });
+
+  const { data: callLogs, isLoading: callLogsLoading } = useQuery<CallLog[]>({
+    queryKey: ["/api/call-logs/all"],
   });
 
   const handleExportAnalytics = (format: "csv" | "excel") => {
@@ -597,6 +602,79 @@ export default function AnalyticsPage() {
             </Card>
           )}
         </div>
+
+        {/* Call Logs Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Phone className="h-5 w-5" />
+              Salesperson Call Logs
+            </CardTitle>
+            <CardDescription>Recent call activities from all salespersons</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {callLogsLoading ? (
+              <div className="space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            ) : callLogs && callLogs.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Salesperson</TableHead>
+                      <TableHead>Lead</TableHead>
+                      <TableHead>Call Status</TableHead>
+                      <TableHead>Duration (min)</TableHead>
+                      <TableHead>Notes</TableHead>
+                      <TableHead>Next Follow-up</TableHead>
+                      <TableHead>Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {callLogs.map((log) => (
+                      <TableRow key={log._id} data-testid={`call-log-${log._id}`}>
+                        <TableCell className="font-medium">{log.salespersonName}</TableCell>
+                        <TableCell>
+                          {(log.leadId as any)?.name || (log.leadId as any)?.phone || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={
+                              log.callStatus === "Interested" || log.callStatus === "Meeting Scheduled" 
+                                ? "default" 
+                                : log.callStatus === "Not Interested"
+                                ? "destructive"
+                                : "secondary"
+                            }
+                          >
+                            {log.callStatus}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{log.callDuration || '-'}</TableCell>
+                        <TableCell className="max-w-xs truncate">
+                          {log.notes || '-'}
+                        </TableCell>
+                        <TableCell>
+                          {log.nextFollowUpDate 
+                            ? format(new Date(log.nextFollowUpDate), 'PP')
+                            : '-'}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(log.createdAt), 'PP p')}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">No call logs yet</p>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Activity Timeline */}
         <Card>

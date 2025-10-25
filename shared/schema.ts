@@ -270,6 +270,32 @@ export const insertBuyerInterestSchema = z.object({
 
 export type InsertBuyerInterest = z.infer<typeof insertBuyerInterestSchema>;
 
+// ============= Call Log Schema =============
+export const callStatuses = ["Called - No Answer", "Called - Answered", "Follow Up Scheduled", "Not Interested", "Interested", "Meeting Scheduled"] as const;
+export type CallStatus = typeof callStatuses[number];
+
+export interface CallLog {
+  _id: string;
+  leadId: string;
+  salespersonId: string;
+  salespersonName: string;
+  callStatus: CallStatus;
+  callDuration?: number;
+  notes?: string;
+  nextFollowUpDate?: Date;
+  createdAt: Date;
+}
+
+export const insertCallLogSchema = z.object({
+  leadId: z.string().min(1, "Lead is required"),
+  callStatus: z.enum(callStatuses),
+  callDuration: z.number().min(0, "Duration must be positive").optional(),
+  notes: z.string().optional(),
+  nextFollowUpDate: z.string().optional(),
+});
+
+export type InsertCallLog = z.infer<typeof insertCallLogSchema>;
+
 // ============= Dashboard Stats =============
 export interface DashboardStats {
   totalLeads: number;

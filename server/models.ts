@@ -8,6 +8,7 @@ import type {
   Payment,
   ActivityLog,
   BuyerInterest,
+  CallLog,
   UserRole,
   LeadStatus,
   LeadRating,
@@ -16,6 +17,7 @@ import type {
   PlotCategory,
   PaymentMode,
   BookingType,
+  CallStatus,
 } from "@shared/schema";
 
 // User Model
@@ -207,3 +209,25 @@ export const LeadInterestModel = mongoose.model<ILeadInterest>(
   "LeadInterest",
   leadInterestSchema
 );
+
+// Call Log Model
+interface ICallLog extends Omit<CallLog, "_id">, Document {}
+
+const callLogSchema = new Schema<ICallLog>(
+  {
+    leadId: { type: Schema.Types.ObjectId, ref: "Lead", required: true },
+    salespersonId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    salespersonName: { type: String, required: true },
+    callStatus: {
+      type: String,
+      enum: ["Called - No Answer", "Called - Answered", "Follow Up Scheduled", "Not Interested", "Interested", "Meeting Scheduled"],
+      required: true,
+    },
+    callDuration: Number,
+    notes: String,
+    nextFollowUpDate: Date,
+  },
+  { timestamps: true }
+);
+
+export const CallLogModel = mongoose.model<ICallLog>("CallLog", callLogSchema);

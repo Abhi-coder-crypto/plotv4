@@ -9,6 +9,7 @@ import {
   ActivityLogModel,
   BuyerInterestModel,
   LeadInterestModel,
+  CallLogModel,
 } from "./models";
 import { authenticateToken, requireAdmin, generateToken, type AuthRequest } from "./middleware/auth";
 import type { AuthResponse, DashboardStats, SalespersonStats } from "@shared/schema";
@@ -24,6 +25,7 @@ import {
   insertPaymentSchema,
   insertBuyerInterestSchema,
   insertLeadInterestSchema,
+  insertCallLogSchema,
 } from "@shared/schema";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth, startOfWeek, format } from "date-fns";
 
@@ -1067,6 +1069,99 @@ export function registerRoutes(app: Express) {
     } catch (error: any) {
       console.error("Create payment error:", error);
       res.status(500).json({ message: "Failed to create payment" });
+    }
+  });
+
+  // ============= Call Log Routes =============
+  app.post("/api/call-logs", authenticateToken, async (req, res) => {
+    try {
+      const validationResult = insertCallLogSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ message: "Invalid request data" });
+      }
+
+      const { leadId, callStatus, callDuration, notes, nextFollowUpDate } = validationResult.data;
+      const authReq = req as AuthRequest;
+
+      const callLog = await CallLogModel.create({
+        leadId,
+        salespersonId: authReq.user!._id,
+        salespersonName: authReq.user!.name,
+        callStatus,
+        callDuration,
+        notes,
+        nextFollowUpDate: nextFollowUpDate ? new Date(nextFollowUpDate) : undefined,
+      });
+
+      if (callStatus === "Contacted" || callStatus === "Called - Answered") {
+        await LeadModel.findByIdAndUpdate(leadId, {
+          status: "Contacted",
+        });
+      } else if (callStatus === "Interested" || callStatus === "Meeting Scheduled") {
+        await LeadModel.findByIdAndUpdate(leadId, {
+          status: "Interested",
+        });
+      }
+
+      if (nextFollowUpDate) {
+        await LeadModel.findByIdAndUpdate(leadId, {
+          followUpDate: new Date(nextFollowUpDate),
+        });
+      }
+
+      const lead = await LeadModel.findById(leadId);
+      await ActivityLogModel.create({
+        userId: authReq.user!._id,
+        userName: authReq.user!.name,
+        action: "Call Logged",
+        entityType: "lead",
+        entityId: leadId,
+        details: `${callStatus} - ${lead?.name || 'Lead'}`,
+      });
+
+      res.status(201).json(callLog);
+    } catch (error: any) {
+      console.error("Create call log error:", error);
+      res.status(500).json({ message: "Failed to create call log" });
+    }
+  });
+
+  app.get("/api/call-logs/lead/:leadId", authenticateToken, async (req, res) => {
+    try {
+      const { leadId } = req.params;
+      const callLogs = await CallLogModel.find({ leadId })
+        .sort({ createdAt: -1 });
+      res.json(callLogs);
+    } catch (error: any) {
+      console.error("Get call logs error:", error);
+      res.status(500).json({ message: "Failed to fetch call logs" });
+    }
+  });
+
+  app.get("/api/call-logs/salesperson/:salespersonId", authenticateToken, async (req, res) => {
+    try {
+      const { salespersonId } = req.params;
+      const callLogs = await CallLogModel.find({ salespersonId })
+        .populate("leadId", "name phone email")
+        .sort({ createdAt: -1 });
+      res.json(callLogs);
+    } catch (error: any) {
+      console.error("Get salesperson call logs error:", error);
+      res.status(500).json({ message: "Failed to fetch call logs" });
+    }
+  });
+
+  app.get("/api/call-logs/all", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const callLogs = await CallLogModel.find({})
+        .populate("leadId", "name phone email")
+        .populate("salespersonId", "name email")
+        .sort({ createdAt: -1 })
+        .limit(100);
+      res.json(callLogs);
+    } catch (error: any) {
+      console.error("Get all call logs error:", error);
+      res.status(500).json({ message: "Failed to fetch all call logs" });
     }
   });
 
