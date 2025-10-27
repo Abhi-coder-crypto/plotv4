@@ -3,13 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { format, startOfDay, startOfWeek, startOfMonth, endOfDay, subMonths } from "date-fns";
 import type {
   AnalyticsOverview,
-  SalespersonPerformance,
   DailyMetric,
   MonthlyMetric,
   ActivityTimeline,
   LeadSourceAnalysis,
   PlotCategoryPerformance,
-  CallLog,
 } from "@shared/schema";
 import {
   Card,
@@ -25,15 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   LineChart,
@@ -54,23 +43,10 @@ import {
   Users,
   TrendingUp,
   DollarSign,
-  Phone,
   Target,
   Activity,
   Calendar,
-  Award,
-  Download,
-  FileSpreadsheet,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { exportToCSV, exportToExcel } from "@/lib/csv-export";
-import { SalespersonPerformanceCard } from "@/components/salesperson-performance-card";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
@@ -111,10 +87,6 @@ export default function AnalyticsPage() {
     queryKey: [`/api/analytics/overview?startDate=${startDate}&endDate=${endDate}`],
   });
 
-  const { data: performance, isLoading: performanceLoading } = useQuery<SalespersonPerformance[]>({
-    queryKey: [`/api/analytics/salesperson-performance?startDate=${startDate}&endDate=${endDate}`],
-  });
-
   const { data: dailyMetrics, isLoading: dailyLoading } = useQuery<DailyMetric[]>({
     queryKey: ["/api/analytics/daily-metrics?days=30"],
   });
@@ -135,81 +107,6 @@ export default function AnalyticsPage() {
     queryKey: ["/api/analytics/plot-category-performance"],
   });
 
-  const { data: callLogs, isLoading: callLogsLoading } = useQuery<CallLog[]>({
-    queryKey: ["/api/call-logs/all"],
-  });
-
-  const handleExportAnalytics = (format: "csv" | "excel") => {
-    if (!performance || performance.length === 0) {
-      alert("No analytics data to export");
-      return;
-    }
-
-    const exportData = performance.map((p) => ({
-      "Salesperson Name": p.name,
-      "Email": p.email,
-      "Total Contacts": p.totalContacts,
-      "Leads Assigned": p.leadsAssigned,
-      "Conversions": p.conversions,
-      "Conversion Rate (%)": p.conversionRate,
-      "Buyer Interests": p.buyerInterestsAdded,
-      "Revenue (₹)": p.revenue,
-      "Last Activity": p.lastActivity ? new Date(p.lastActivity).toLocaleDateString() : "No activity",
-    }));
-
-    const filename = `analytics-${dateRange}-${new Date().toISOString().split('T')[0]}`;
-    if (format === "csv") {
-      exportToCSV(exportData, filename);
-    } else {
-      exportToExcel(exportData, filename);
-    }
-  };
-
-  const handleExportLeadSources = (format: "csv" | "excel") => {
-    if (!leadSources || leadSources.length === 0) {
-      alert("No lead source data to export");
-      return;
-    }
-
-    const exportData = leadSources.map((ls) => ({
-      "Source": ls.source,
-      "Total Leads": ls.totalLeads,
-      "Conversions": ls.conversions,
-      "Conversion Rate (%)": ls.conversionRate,
-    }));
-
-    const filename = `lead-sources-${dateRange}-${new Date().toISOString().split('T')[0]}`;
-    if (format === "csv") {
-      exportToCSV(exportData, filename);
-    } else {
-      exportToExcel(exportData, filename);
-    }
-  };
-
-  const handleExportPlotPerformance = (format: "csv" | "excel") => {
-    if (!plotPerformance || plotPerformance.length === 0) {
-      alert("No plot performance data to export");
-      return;
-    }
-
-    const exportData = plotPerformance.map((pp) => ({
-      "Category": pp.category,
-      "Total Plots": pp.totalPlots,
-      "Available": pp.available,
-      "Booked": pp.booked,
-      "Sold": pp.sold,
-      "Average Price (₹)": pp.avgPrice,
-      "Occupancy Rate (%)": pp.occupancyRate,
-    }));
-
-    const filename = `plot-performance-${new Date().toISOString().split('T')[0]}`;
-    if (format === "csv") {
-      exportToCSV(exportData, filename);
-    } else {
-      exportToExcel(exportData, filename);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900 p-6">
       <div className="max-w-[1600px] mx-auto space-y-6">
@@ -223,38 +120,18 @@ export default function AnalyticsPage() {
               Comprehensive team performance and business insights
             </p>
           </div>
-          <div className="flex gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" data-testid="button-export-analytics">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Analytics
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handleExportAnalytics("csv")} data-testid="menu-export-csv">
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />
-                  Export as CSV
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExportAnalytics("excel")} data-testid="menu-export-excel">
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />
-                  Export as Excel
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-[200px]" data-testid="select-date-range">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="this_week">This Week</SelectItem>
-                <SelectItem value="this_month">This Month</SelectItem>
-                <SelectItem value="last_3_months">Last 3 Months</SelectItem>
-                <SelectItem value="last_6_months">Last 6 Months</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className="w-[200px]" data-testid="select-date-range">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="this_week">This Week</SelectItem>
+              <SelectItem value="this_month">This Month</SelectItem>
+              <SelectItem value="last_3_months">Last 3 Months</SelectItem>
+              <SelectItem value="last_6_months">Last 6 Months</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Overview Cards */}
@@ -568,113 +445,6 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Salesperson Performance Cards */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Award className="h-6 w-6" />
-                Salesperson Performance
-              </h2>
-              <p className="text-muted-foreground mt-1">
-                Detailed tracking of contacts, interests, and conversions
-              </p>
-            </div>
-          </div>
-          {performanceLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="h-48 w-full" />
-              ))}
-            </div>
-          ) : performance && performance.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {performance.map((person) => (
-                <SalespersonPerformanceCard key={person.id} person={person} />
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">No salesperson data available</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Call Logs Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5" />
-              Salesperson Call Logs
-            </CardTitle>
-            <CardDescription>Recent call activities from all salespersons</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {callLogsLoading ? (
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-16 w-full" />
-                ))}
-              </div>
-            ) : callLogs && callLogs.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Salesperson</TableHead>
-                      <TableHead>Lead</TableHead>
-                      <TableHead>Call Status</TableHead>
-                      <TableHead>Duration (min)</TableHead>
-                      <TableHead>Notes</TableHead>
-                      <TableHead>Next Follow-up</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {callLogs.map((log) => (
-                      <TableRow key={log._id} data-testid={`call-log-${log._id}`}>
-                        <TableCell className="font-medium">{log.salespersonName}</TableCell>
-                        <TableCell>
-                          {(log.leadId as any)?.name || (log.leadId as any)?.phone || 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={
-                              log.callStatus === "Interested" || log.callStatus === "Meeting Scheduled" 
-                                ? "default" 
-                                : log.callStatus === "Not Interested"
-                                ? "destructive"
-                                : "secondary"
-                            }
-                          >
-                            {log.callStatus}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{log.callDuration || '-'}</TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {log.notes || '-'}
-                        </TableCell>
-                        <TableCell>
-                          {log.nextFollowUpDate 
-                            ? format(new Date(log.nextFollowUpDate), 'PP')
-                            : '-'}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(log.createdAt), 'PP p')}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-8">No call logs yet</p>
-            )}
-          </CardContent>
-        </Card>
 
         {/* Activity Timeline */}
         <Card>
