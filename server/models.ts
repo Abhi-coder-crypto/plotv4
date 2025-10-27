@@ -253,9 +253,9 @@ const prospectCallSchema = new Schema<IProspectCall>(
       enum: ["Not Answered", "Answered - Not Interested", "Answered - Interested", "Call Back Later", "Wrong Number", "Already has Plot"],
       required: true,
     },
-    callDuration: Number,
     notes: String,
     interestedInProject: { type: Schema.Types.ObjectId, ref: "Project" },
+    interestedInPlot: { type: Schema.Types.ObjectId, ref: "Plot" },
     interestedInCategory: {
       type: String,
       enum: ["Investment Plot", "Bungalow Plot", "Residential Plot", "Commercial Plot", "Open Plot"],

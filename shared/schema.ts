@@ -313,9 +313,9 @@ export interface ProspectCall {
   phoneNumber: string;
   contactName?: string;
   callStatus: ProspectCallStatus;
-  callDuration?: number;
   notes?: string;
   interestedInProject?: string;
+  interestedInPlot?: string;
   interestedInCategory?: PlotCategory;
   budgetRange?: string;
   convertedToLead?: boolean;
@@ -328,9 +328,9 @@ export const insertProspectCallSchema = z.object({
   phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
   contactName: z.string().optional(),
   callStatus: z.enum(prospectCallStatuses),
-  callDuration: z.number().min(0, "Duration must be positive").optional(),
   notes: z.string().optional(),
   interestedInProject: z.string().optional(),
+  interestedInPlot: z.string().optional(),
   interestedInCategory: z.enum(plotCategories).optional(),
   budgetRange: z.string().optional(),
 });

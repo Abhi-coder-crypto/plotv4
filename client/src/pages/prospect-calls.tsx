@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertProspectCallSchema, prospectCallStatuses, plotCategories, type InsertProspectCall, type ProspectCall, type Project } from "@shared/schema";
+import { insertProspectCallSchema, prospectCallStatuses, plotCategories, type InsertProspectCall, type ProspectCall, type Project, type Plot } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -50,6 +50,10 @@ export default function ProspectCalls() {
     queryKey: ["/api/projects"],
   });
 
+  const { data: plots } = useQuery<Plot[]>({
+    queryKey: ["/api/plots"],
+  });
+
   const form = useForm<InsertProspectCall>({
     resolver: zodResolver(insertProspectCallSchema),
     defaultValues: {
@@ -59,6 +63,11 @@ export default function ProspectCalls() {
       notes: "",
     },
   });
+
+  const selectedProject = form.watch("interestedInProject");
+  const availablePlots = plots?.filter(
+    plot => plot.projectId === selectedProject && plot.status === "Available"
+  ) || [];
 
   const createProspectCallMutation = useMutation({
     mutationFn: async (data: InsertProspectCall) => {
@@ -182,56 +191,33 @@ export default function ProspectCalls() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="callStatus"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Call Status *</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger data-testid="select-call-status">
-                              <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {prospectCallStatuses.map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {status}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="callDuration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Call Duration (seconds)</FormLabel>
+                <FormField
+                  control={form.control}
+                  name="callStatus"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Call Status *</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            value={field.value || ""}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                            placeholder="Optional"
-                            data-testid="input-call-duration"
-                          />
+                          <SelectTrigger data-testid="select-call-status">
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                        <SelectContent>
+                          {prospectCallStatuses.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -240,7 +226,10 @@ export default function ProspectCalls() {
                     <FormItem>
                       <FormLabel>Interested in Project</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          form.setValue("interestedInPlot", "");
+                        }}
                         value={field.value}
                       >
                         <FormControl>
@@ -252,6 +241,41 @@ export default function ProspectCalls() {
                           {projects?.map((project) => (
                             <SelectItem key={project._id} value={project._id}>
                               {project.name} - {project.location}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="interestedInPlot"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Available Plot</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={!selectedProject || availablePlots.length === 0}
+                      >
+                        <FormControl>
+                          <SelectTrigger data-testid="select-plot">
+                            <SelectValue placeholder={
+                              !selectedProject 
+                                ? "Select a project first" 
+                                : availablePlots.length === 0 
+                                  ? "No available plots" 
+                                  : "Select plot (if mentioned)"
+                            } />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {availablePlots.map((plot) => (
+                            <SelectItem key={plot._id} value={plot._id}>
+                              Plot {plot.plotNumber} - {plot.size} - ₹{plot.price.toLocaleString()}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -420,7 +444,6 @@ export default function ProspectCalls() {
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
                       <span>{format(new Date(call.createdAt), "MMM dd, yyyy 'at' hh:mm a")}</span>
-                      {call.callDuration && <span>{call.callDuration}s</span>}
                     </div>
                     {call.notes && (
                       <p className="text-sm text-muted-foreground mt-1">{call.notes}</p>

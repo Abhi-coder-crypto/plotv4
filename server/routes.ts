@@ -1241,7 +1241,7 @@ export function registerRoutes(app: Express) {
         return res.status(400).json({ message: "Invalid request data" });
       }
 
-      const { phoneNumber, contactName, callStatus, callDuration, notes, interestedInProject, interestedInCategory, budgetRange } = validationResult.data;
+      const { phoneNumber, contactName, callStatus, notes, interestedInProject, interestedInPlot, interestedInCategory, budgetRange } = validationResult.data;
       const authReq = req as AuthRequest;
 
       const prospectCall = await ProspectCallModel.create({
@@ -1250,9 +1250,9 @@ export function registerRoutes(app: Express) {
         phoneNumber,
         contactName,
         callStatus,
-        callDuration,
         notes,
         interestedInProject,
+        interestedInPlot,
         interestedInCategory,
         budgetRange,
         convertedToLead: false,
@@ -1283,6 +1283,7 @@ export function registerRoutes(app: Express) {
       const { salespersonId } = req.params;
       const prospectCalls = await ProspectCallModel.find({ salespersonId })
         .populate("interestedInProject", "name location")
+        .populate("interestedInPlot", "plotNumber size price")
         .sort({ createdAt: -1 });
       res.json(prospectCalls);
     } catch (error: any) {
