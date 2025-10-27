@@ -11,7 +11,14 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 - **Framework & Build Tool**: React 18 with TypeScript, Vite for fast development.
 - **Routing**: Wouter for lightweight client-side routing.
-- **UI Component System**: ShadCN/UI (built on Radix UI) and Tailwind CSS for styling, adhering to Material Design principles with a blue-gold brand. Features include responsive, mobile-first design, glassmorphism effects, and light/dark mode.
+- **UI Component System**: ShadCN/UI (built on Radix UI) and Tailwind CSS for styling with stunning modern design. Features include:
+  - **Glassmorphism Effects**: Transparent, blurred glass-like cards with beautiful shadows
+  - **Animated Gradients**: Flowing multi-color gradients on headers and backgrounds
+  - **Smooth Animations**: Fade-in, slide-up, scale-in, and float effects throughout
+  - **Modern Card Design**: Gradient-bordered cards with hover effects that lift and glow
+  - **Visual Flourishes**: Sparkle icons, pulse effects, and animated loading states
+  - **Responsive Design**: Mobile-first approach with optimized layouts
+  - **Light/Dark Mode**: Full theme support with proper color variants
 - **State Management**: TanStack Query for server state, React Context API for authentication and theme, React Hook Form with Zod for form handling and validation.
 
 ### Backend Architecture
@@ -34,8 +41,30 @@ Preferred communication style: Simple, everyday language.
 
 ### System Design Choices
 - **Real-Time Updates**: WebSocket implementation with JWT authentication for instant data synchronization across all connected clients. Uses SESSION_SECRET environment variable with fail-fast security validation. Automatic query cache invalidation ensures UI updates without page refreshes.
-- **Login Experience**: Professional background image showing plots and buildings with semi-transparent overlay for improved visual appeal.
-- **Simple Dashboards**: Clean, focused dashboards showing essential metrics only. Admin dashboard displays core business stats (leads, conversions, available plots, revenue) with quick stats overview. Salesperson dashboard shows assigned leads, follow-ups, conversions, and revenue with today's follow-up list.
+- **Login Experience**: Stunning login page with:
+  - Professional aerial background image of real estate plots
+  - Animated gradient overlays with floating particle effects
+  - Glassmorphism card design with blur effects
+  - Gradient button with arrow animation on hover
+  - Pulsing sparkle icons and floating logo animation
+  - Demo credentials clearly displayed in glass container
+- **Stunning Dashboards**: Beautiful, modern dashboards with amazing visual effects:
+  - **Admin Dashboard**: 
+    - Animated gradient hero header with floating decorative elements
+    - Large metric cards with gradient text numbers and floating icon animations
+    - Glassmorphism cards with smooth hover effects (lift and shadow)
+    - Color-coded gradient icons for each metric (blue/cyan, green/emerald, purple/pink, amber/orange)
+    - Performance cards with gradient backgrounds and smooth transitions
+    - Staggered fade-in animations for sequential loading effect
+  - **Salesperson Dashboard**:
+    - Animated gradient hero with personalized greeting
+    - Clean metric cards with gradient numbers and pulsing important stats
+    - Enhanced follow-up cards with gradient badges and profile circles
+    - "Call Now" buttons with gradient backgrounds
+    - Empty state with celebration icons when all caught up
+    - Hover effects that highlight and enlarge cards
+  - Clear, descriptive labels and helpful sub-text on all metrics
+  - Loading states with animated spinner and sparkle icons
 - **Salesperson Performance**: Dedicated `/performance` page with clean cards showing key metrics per salesperson including leads assigned, conversions, conversion rate, buyer interests added, and revenue. Clicking on a salesperson card displays their detailed call activity history with lead information, call status, notes, and follow-up dates.
 - **Projects & Plots Management**: Hierarchical table structure for projects, showing plot details, buyer interest counts, highest offers, and assigned salespersons. Category-based plot filtering (Investment Plot, Bungalow Plot, Residential Plot, Commercial Plot, Open Plot).
 - **Lead Management**: Enhanced lead creation and editing forms with:
@@ -57,7 +86,11 @@ Preferred communication style: Simple, everyday language.
   - Export functionality for analytics data (CSV/Excel)
   - Secure admin-only access with explicit role checking and automatic redirects
   - Separated from team performance tracking for clarity - team member details are in the dedicated Performance section
-- **Navigation Structure**: Admin navigation includes Dashboard, Leads, Analytics, Performance, Credentials, Projects & Plots, and Settings. Salesperson navigation shows Dashboard, My Leads, and Plots only.
+- **Navigation Structure**: Clear, intuitive navigation structure:
+  - **Admin Navigation**: Dashboard, Leads, Salespersons, Projects & Plots, Analytics, Performance, and Settings
+  - **Salesperson Navigation**: Dashboard, "My Assigned Leads" (clarified naming), Prospect Calls, and "Available Plots" (clarified naming)
+  - Navigation labels updated to be crystal clear and eliminate confusion
+  - Organized into logical sections with icons for visual identification
 - **Data Export**: CSV/Excel export functionality for filtered lead data and analytics reports.
 
 ## External Dependencies
