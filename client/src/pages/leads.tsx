@@ -50,7 +50,7 @@ import { exportToCSV, exportToExcel } from "@/lib/csv-export";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertLeadSchema, leadSources, leadStatuses, leadRatings, insertCallLogSchema, callStatuses } from "@shared/schema";
+import { insertLeadSchema, leadSources, leadStatuses, leadRatings, leadClassifications, insertCallLogSchema, callStatuses } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -389,7 +389,8 @@ export default function Leads() {
             <TableHead>Source</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Rating</TableHead>
-            <TableHead>Follow-up</TableHead>
+            <TableHead>Classification</TableHead>
+            {isAdmin && <TableHead>Added By</TableHead>}
             <TableHead>Assigned To</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -420,14 +421,30 @@ export default function Leads() {
                 </Badge>
               </TableCell>
               <TableCell>
-                {lead.followUpDate ? (
-                  <span className="text-sm text-muted-foreground">
-                    {format(new Date(lead.followUpDate), "PP")}
-                  </span>
+                {lead.classification ? (
+                  <Badge 
+                    className={lead.classification === "Important" ? "bg-orange-500" : "bg-blue-500"} 
+                    data-testid={`badge-classification-${lead._id}`}
+                  >
+                    {lead.classification}
+                  </Badge>
                 ) : (
                   <span className="text-sm text-muted-foreground">-</span>
                 )}
               </TableCell>
+              {isAdmin && (
+                <TableCell>
+                  {lead.assignedBy ? (
+                    <span className="text-sm text-muted-foreground" data-testid={`text-added-by-${lead._id}`}>
+                      {typeof lead.assignedBy === 'object' 
+                        ? (lead.assignedBy as PopulatedUser).name 
+                        : 'Unknown'}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">Admin</span>
+                  )}
+                </TableCell>
+              )}
               <TableCell>
                 {lead.assignedTo ? (
                   <span className="text-sm" data-testid={`text-assigned-to-${lead._id}`}>
@@ -594,7 +611,7 @@ export default function Leads() {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="source"
@@ -643,6 +660,8 @@ export default function Leads() {
                       </FormItem>
                     )}
                   />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="rating"
@@ -659,6 +678,30 @@ export default function Leads() {
                             {leadRatings.map((rating) => (
                               <SelectItem key={rating} value={rating}>
                                 {rating}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="classification"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Classification (Optional)</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger data-testid="select-lead-classification">
+                              <SelectValue placeholder="Select classification" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {leadClassifications.map((classification) => (
+                              <SelectItem key={classification} value={classification}>
+                                {classification}
                               </SelectItem>
                             ))}
                           </SelectContent>

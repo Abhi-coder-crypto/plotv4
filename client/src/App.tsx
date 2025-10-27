@@ -15,6 +15,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import SalespersonDashboard from "@/pages/salesperson-dashboard";
 import Leads from "@/pages/leads";
 import Salespersons from "@/pages/salespersons";
+import SalespersonPerformancePage from "@/pages/salesperson-performance";
 import Plots from "@/pages/plots";
 import Analytics from "@/pages/analytics";
 import Settings from "@/pages/settings";
@@ -57,6 +58,9 @@ function Router() {
     <Switch>
       <Route path="/dashboard" component={() => <ProtectedRoute component={DashboardRoute} />} />
       <Route path="/leads" component={() => <ProtectedRoute component={Leads} />} />
+      {isAdmin && (
+        <Route path="/performance" component={() => <ProtectedRoute component={SalespersonPerformancePage} />} />
+      )}
       {isAdmin && (
         <Route path="/salespersons" component={() => <ProtectedRoute component={Salespersons} />} />
       )}

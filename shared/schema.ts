@@ -12,6 +12,10 @@ export type LeadStatus = typeof leadStatuses[number];
 export const leadRatings = ["Urgent", "High", "Low"] as const;
 export type LeadRating = typeof leadRatings[number];
 
+// Lead classifications
+export const leadClassifications = ["Important", "Inquiry"] as const;
+export type LeadClassification = typeof leadClassifications[number];
+
 // Lead sources
 export const leadSources = ["Website", "Facebook", "Google Ads", "Referral", "Walk-in", "Other"] as const;
 export type LeadSource = typeof leadSources[number];
@@ -85,6 +89,7 @@ export interface Lead {
   source: LeadSource;
   status: LeadStatus;
   rating: LeadRating;
+  classification?: LeadClassification;
   assignedTo?: string | PopulatedUser;
   assignedBy?: string | PopulatedUser;
   followUpDate?: Date;
@@ -103,6 +108,7 @@ export const insertLeadSchema = z.object({
   source: z.enum(leadSources),
   status: z.enum(leadStatuses).default("New"),
   rating: z.enum(leadRatings).default("High"),
+  classification: z.enum(leadClassifications).optional(),
   assignedTo: z.string().optional(),
   followUpDate: z.string().optional(),
   notes: z.string().optional(),

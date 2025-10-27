@@ -13,6 +13,7 @@ import type {
   LeadStatus,
   LeadRating,
   LeadSource,
+  LeadClassification,
   PlotStatus,
   PlotCategory,
   PaymentMode,
@@ -62,6 +63,10 @@ const leadSchema = new Schema<ILead>(
       type: String,
       enum: ["Urgent", "High", "Low"],
       default: "High",
+    },
+    classification: {
+      type: String,
+      enum: ["Important", "Inquiry"],
     },
     assignedTo: { type: Schema.Types.ObjectId, ref: "User" },
     assignedBy: { type: Schema.Types.ObjectId, ref: "User" },

@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import backgroundImage from "@assets/generated_images/Real_estate_plots_buildings_aerial_f9df5abc.png";
 
 import { Building2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -63,9 +64,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/10 p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
       <div
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-8">
           <div
@@ -73,8 +83,8 @@ export default function Login() {
           >
             <Building2 className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Plot Management CRM</h1>
-          <p className="text-muted-foreground mt-2">Sign in to manage your leads and plots</p>
+          <h1 className="text-3xl font-bold text-white dark:text-white">Plot Management CRM</h1>
+          <p className="text-white/90 dark:text-white/90 mt-2">Sign in to manage your leads and plots</p>
         </div>
 
         <Card className="backdrop-blur-lg bg-card/80 border-card-border shadow-xl">
@@ -143,7 +153,7 @@ export default function Login() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="text-center text-sm text-white/80 dark:text-white/80 mt-6 bg-black/20 backdrop-blur-sm py-2 px-4 rounded-lg">
           Demo: admin@example.com / password123
         </p>
       </div>
