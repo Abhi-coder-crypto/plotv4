@@ -74,6 +74,8 @@ Preferred communication style: Simple, everyday language.
   - Classification badges (blue for Inquiry, orange for Important) in leads table
   - Admin-only visibility of "Added By" column for oversight and tracking
   - Integration of LeadInterest with BuyerInterest for comprehensive tracking
+  - **Security & Access Control**: Salespersons can only view their assigned leads + unassigned leads (NOT leads assigned to other salespersons). Admins have full visibility to all leads.
+  - **Clear UI Labels**: Leads page uses intuitive tab labels "My Assigned Leads" and "Unassigned Leads" with helpful count subtitles for non-technical users
 - **Call Logging System**: Salespersons can log call activities for assigned leads with call status, notes, and next follow-up dates. Duration field is optional. When logging a call with a next follow-up date, the lead's follow-up date is automatically updated.
 - **Notification System**: Real-time notification bell for salespersons showing missed follow-ups. Badge displays count of overdue leads, dropdown shows detailed list with lead information. Notifications refresh every minute and clear on logout.
 - **Analytics Dashboard**: Comprehensive analytics section for admin users with crisp, business-focused visualizations:
