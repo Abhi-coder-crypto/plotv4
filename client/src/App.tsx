@@ -118,18 +118,20 @@ function AppContent({ style }: { style: any }) {
 
   return (
     <SidebarProvider style={style as React.CSSProperties}>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full bg-muted/30 dark:bg-background">
         <AppSidebar />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <header className="flex items-center justify-between px-6 py-3 border-b border-border bg-background sticky top-0 z-10">
-            <SidebarTrigger data-testid="button-sidebar-toggle" />
-            <div className="flex items-center gap-2">
+          <header className="flex items-center justify-between px-8 py-4 border-b border-border bg-card backdrop-blur-sm sticky top-0 z-10 shadow-sm">
+            <SidebarTrigger data-testid="button-sidebar-toggle" className="hover:bg-muted rounded-lg p-2" />
+            <div className="flex items-center gap-3">
               {!isAdmin && <NotificationBell />}
               <ThemeToggle />
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto p-6 bg-background">
-            <Router />
+          <main className="flex-1 overflow-y-auto p-8 bg-background/50 dark:bg-background">
+            <div className="max-w-[1600px] mx-auto">
+              <Router />
+            </div>
           </main>
         </div>
       </div>
