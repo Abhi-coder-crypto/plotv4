@@ -142,7 +142,6 @@ export default function Leads() {
     defaultValues: {
       leadId: "",
       callStatus: "Called - No Answer",
-      callDuration: 0,
       notes: "",
       nextFollowUpDate: "",
     },
@@ -329,7 +328,6 @@ export default function Leads() {
     callLogForm.reset({
       leadId: lead._id,
       callStatus: "Called - No Answer",
-      callDuration: 0,
       notes: "",
       nextFollowUpDate: "",
     });
@@ -1448,26 +1446,6 @@ export default function Leads() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={callLogForm.control}
-                name="callDuration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Call Duration (minutes)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        data-testid="input-call-duration"
-                      />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
