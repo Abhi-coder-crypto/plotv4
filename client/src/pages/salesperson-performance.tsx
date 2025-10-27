@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Users, Award, TrendingUp, DollarSign, Phone, ArrowLeft } from "lucide-react";
+import { Users, Award, TrendingUp, DollarSign, Phone, ArrowLeft, PhoneCall } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
-import type { SalespersonPerformance, CallLog } from "@shared/schema";
+import type { SalespersonPerformance, CallLog, ProspectCall } from "@shared/schema";
 
 export default function SalespersonPerformancePage() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<SalespersonPerformance | null>(null);
@@ -17,6 +18,11 @@ export default function SalespersonPerformancePage() {
 
   const { data: callLogs, isLoading: callLogsLoading } = useQuery<CallLog[]>({
     queryKey: [`/api/analytics/customer-contacts/${selectedSalesperson?.id}`],
+    enabled: !!selectedSalesperson,
+  });
+
+  const { data: prospectCalls, isLoading: prospectCallsLoading } = useQuery<ProspectCall[]>({
+    queryKey: [`/api/prospect-calls/salesperson/${selectedSalesperson?.id}`],
     enabled: !!selectedSalesperson,
   });
 
@@ -47,85 +53,177 @@ export default function SalespersonPerformancePage() {
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5" />
-              Call Activity History
-            </CardTitle>
-            <CardDescription>All calls made to leads by {selectedSalesperson.name}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {callLogsLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              </div>
-            ) : callLogs && callLogs.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Lead</TableHead>
-                      <TableHead>Call Status</TableHead>
-                      <TableHead>Notes</TableHead>
-                      <TableHead>Next Follow-up</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {callLogs.map((log) => (
-                      <TableRow key={log._id} data-testid={`call-log-${log._id}`}>
-                        <TableCell className="font-medium">
-                          {(log.leadId as any)?.name || (log.leadId as any)?.phone || 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={
-                              log.callStatus === "Interested" || log.callStatus === "Meeting Scheduled" 
-                                ? "default" 
-                                : log.callStatus === "Not Interested"
-                                ? "destructive"
-                                : "secondary"
-                            }
-                          >
-                            {log.callStatus}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {log.notes || '-'}
-                        </TableCell>
-                        <TableCell>
-                          {log.nextFollowUpDate 
-                            ? (() => {
+        <Tabs defaultValue="lead-calls" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="lead-calls" data-testid="tab-lead-calls">
+              Lead Calls ({callLogs?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="prospect-calls" data-testid="tab-prospect-calls">
+              Prospect Calls ({prospectCalls?.length || 0})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="lead-calls">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Phone className="h-5 w-5" />
+                  Lead Call Activity
+                </CardTitle>
+                <CardDescription>Calls made to assigned leads by {selectedSalesperson.name}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {callLogsLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                  </div>
+                ) : callLogs && callLogs.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Lead</TableHead>
+                          <TableHead>Call Status</TableHead>
+                          <TableHead>Notes</TableHead>
+                          <TableHead>Next Follow-up</TableHead>
+                          <TableHead>Date</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {callLogs.map((log) => (
+                          <TableRow key={log._id} data-testid={`call-log-${log._id}`}>
+                            <TableCell className="font-medium">
+                              {(log.leadId as any)?.name || (log.leadId as any)?.phone || 'N/A'}
+                            </TableCell>
+                            <TableCell>
+                              <Badge 
+                                variant={
+                                  log.callStatus === "Interested" || log.callStatus === "Meeting Scheduled" 
+                                    ? "default" 
+                                    : log.callStatus === "Not Interested"
+                                    ? "destructive"
+                                    : "secondary"
+                                }
+                              >
+                                {log.callStatus}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="max-w-xs truncate">
+                              {log.notes || '-'}
+                            </TableCell>
+                            <TableCell>
+                              {log.nextFollowUpDate 
+                                ? (() => {
+                                    try {
+                                      const date = new Date(log.nextFollowUpDate);
+                                      return isNaN(date.getTime()) ? '-' : format(date, 'PP');
+                                    } catch {
+                                      return '-';
+                                    }
+                                  })()
+                                : '-'}
+                            </TableCell>
+                            <TableCell>
+                              {(() => {
                                 try {
-                                  const date = new Date(log.nextFollowUpDate);
-                                  return isNaN(date.getTime()) ? '-' : format(date, 'PP');
+                                  const date = new Date(log.createdAt);
+                                  return isNaN(date.getTime()) ? '-' : format(date, 'PP p');
                                 } catch {
                                   return '-';
                                 }
-                              })()
-                            : '-'}
-                        </TableCell>
-                        <TableCell>
-                          {(() => {
-                            try {
-                              const date = new Date(log.createdAt);
-                              return isNaN(date.getTime()) ? '-' : format(date, 'PP p');
-                            } catch {
-                              return '-';
-                            }
-                          })()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-8">No call logs yet</p>
-            )}
-          </CardContent>
-        </Card>
+                              })()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No lead calls logged yet</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="prospect-calls">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PhoneCall className="h-5 w-5" />
+                  Prospect Call Activity
+                </CardTitle>
+                <CardDescription>Cold calls made to random prospects by {selectedSalesperson.name}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {prospectCallsLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                  </div>
+                ) : prospectCalls && prospectCalls.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Phone Number</TableHead>
+                          <TableHead>Contact Name</TableHead>
+                          <TableHead>Call Status</TableHead>
+                          <TableHead>Notes</TableHead>
+                          <TableHead>Converted</TableHead>
+                          <TableHead>Date</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {prospectCalls.map((call) => (
+                          <TableRow key={call._id} data-testid={`prospect-call-${call._id}`}>
+                            <TableCell className="font-medium">{call.phoneNumber}</TableCell>
+                            <TableCell>{call.contactName || '-'}</TableCell>
+                            <TableCell>
+                              <Badge 
+                                variant={
+                                  call.callStatus === "Answered - Interested" 
+                                    ? "default" 
+                                    : call.callStatus === "Answered - Not Interested"
+                                    ? "destructive"
+                                    : "secondary"
+                                }
+                              >
+                                {call.callStatus}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="max-w-xs truncate">
+                              {call.notes || '-'}
+                            </TableCell>
+                            <TableCell>
+                              {call.convertedToLead ? (
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+                                  Yes
+                                </Badge>
+                              ) : (
+                                '-'
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {(() => {
+                                try {
+                                  const date = new Date(call.createdAt);
+                                  return isNaN(date.getTime()) ? '-' : format(date, 'PP p');
+                                } catch {
+                                  return '-';
+                                }
+                              })()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No prospect calls logged yet</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     );
   }
