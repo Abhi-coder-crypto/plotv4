@@ -96,11 +96,25 @@ export default function SalespersonPerformancePage() {
                         </TableCell>
                         <TableCell>
                           {log.nextFollowUpDate 
-                            ? format(new Date(log.nextFollowUpDate), 'PP')
+                            ? (() => {
+                                try {
+                                  const date = new Date(log.nextFollowUpDate);
+                                  return isNaN(date.getTime()) ? '-' : format(date, 'PP');
+                                } catch {
+                                  return '-';
+                                }
+                              })()
                             : '-'}
                         </TableCell>
                         <TableCell>
-                          {format(new Date(log.createdAt), 'PP p')}
+                          {(() => {
+                            try {
+                              const date = new Date(log.createdAt);
+                              return isNaN(date.getTime()) ? '-' : format(date, 'PP p');
+                            } catch {
+                              return '-';
+                            }
+                          })()}
                         </TableCell>
                       </TableRow>
                     ))}

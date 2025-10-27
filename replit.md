@@ -36,7 +36,7 @@ Preferred communication style: Simple, everyday language.
 - **Real-Time Updates**: WebSocket implementation with JWT authentication for instant data synchronization across all connected clients. Uses SESSION_SECRET environment variable with fail-fast security validation. Automatic query cache invalidation ensures UI updates without page refreshes.
 - **Login Experience**: Professional background image showing plots and buildings with semi-transparent overlay for improved visual appeal.
 - **Simple Dashboards**: Clean, focused dashboards showing essential metrics only. Admin dashboard displays core business stats (leads, conversions, available plots, revenue) with quick stats overview. Salesperson dashboard shows assigned leads, follow-ups, conversions, and revenue with today's follow-up list.
-- **Salesperson Performance**: Dedicated `/performance` page with clean cards showing key metrics per salesperson including leads assigned, conversions, conversion rate, buyer interests added, and revenue.
+- **Salesperson Performance**: Dedicated `/performance` page with clean cards showing key metrics per salesperson including leads assigned, conversions, conversion rate, buyer interests added, and revenue. Clicking on a salesperson card displays their detailed call activity history with lead information, call status, notes, and follow-up dates.
 - **Projects & Plots Management**: Hierarchical table structure for projects, showing plot details, buyer interest counts, highest offers, and assigned salespersons. Category-based plot filtering (Investment Plot, Bungalow Plot, Residential Plot, Commercial Plot, Open Plot).
 - **Lead Management**: Enhanced lead creation and editing forms with:
   - Lead classification system (Inquiry vs Important) to help prioritize leads
@@ -45,16 +45,18 @@ Preferred communication style: Simple, everyday language.
   - Classification badges (blue for Inquiry, orange for Important) in leads table
   - Admin-only visibility of "Added By" column for oversight and tracking
   - Integration of LeadInterest with BuyerInterest for comprehensive tracking
-- **Call Logging System**: Salespersons can log call activities for assigned leads with call status, duration, notes, and next follow-up dates. When logging a call with a next follow-up date, the lead's follow-up date is automatically updated.
+- **Call Logging System**: Salespersons can log call activities for assigned leads with call status, notes, and next follow-up dates. Duration field is optional. When logging a call with a next follow-up date, the lead's follow-up date is automatically updated.
 - **Notification System**: Real-time notification bell for salespersons showing missed follow-ups. Badge displays count of overdue leads, dropdown shows detailed list with lead information. Notifications refresh every minute and clear on logout.
-- **Analytics Dashboard**: Comprehensive analytics section for admin users with crisp, easy-to-understand visualizations:
+- **Analytics Dashboard**: Comprehensive analytics section for admin users with crisp, business-focused visualizations:
   - Overview metrics cards showing conversion rate, total revenue, active leads, and average response time
-  - Monthly performance line chart tracking leads, conversions, and revenue trends
-  - Lead source distribution pie chart showing channel effectiveness
-  - Top performers bar chart comparing salesperson conversions and revenue
+  - Daily and monthly performance charts tracking leads, conversions, and revenue trends
+  - Lead source distribution analysis showing channel effectiveness
+  - Plot category performance metrics
+  - Recent activity timeline for monitoring business operations
   - Date range filtering (Today, This Week, This Month, Last 3/6 Months)
   - Export functionality for analytics data (CSV/Excel)
   - Secure admin-only access with explicit role checking and automatic redirects
+  - Separated from team performance tracking for clarity - team member details are in the dedicated Performance section
 - **Navigation Structure**: Admin navigation includes Dashboard, Leads, Analytics, Performance, Credentials, Projects & Plots, and Settings. Salesperson navigation shows Dashboard, My Leads, and Plots only.
 - **Data Export**: CSV/Excel export functionality for filtered lead data and analytics reports.
 
