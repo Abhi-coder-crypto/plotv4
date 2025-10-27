@@ -1,4 +1,4 @@
-import { Home, Users, Building2, ClipboardList, Settings, LogOut, User, BarChart3, LineChart, LayoutDashboard, UserCog } from "lucide-react";
+import { Home, Users, Building2, ClipboardList, Settings, LogOut, User, BarChart3, LineChart, LayoutDashboard, UserCog, Phone } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -51,6 +51,7 @@ export function AppSidebar() {
   const salespersonItems = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "My Leads", url: "/leads", icon: ClipboardList },
+    { title: "Prospect Calls", url: "/prospect-calls", icon: Phone },
     { title: "Plots", url: "/plots", icon: Building2 },
   ];
 

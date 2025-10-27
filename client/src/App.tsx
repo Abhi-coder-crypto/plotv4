@@ -18,6 +18,7 @@ import Salespersons from "@/pages/salespersons";
 import SalespersonPerformancePage from "@/pages/salesperson-performance";
 import Analytics from "@/pages/analytics";
 import Plots from "@/pages/plots";
+import ProspectCalls from "@/pages/prospect-calls";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
@@ -75,6 +76,7 @@ function Router() {
     <Switch>
       <Route path="/dashboard" component={() => <ProtectedRoute component={DashboardRoute} />} />
       <Route path="/leads" component={() => <ProtectedRoute component={Leads} />} />
+      <Route path="/prospect-calls" component={() => <ProtectedRoute component={ProspectCalls} />} />
       <Route path="/analytics" component={() => <AdminRoute component={Analytics} />} />
       <Route path="/performance" component={() => <AdminRoute component={SalespersonPerformancePage} />} />
       <Route path="/salespersons" component={() => <AdminRoute component={Salespersons} />} />
