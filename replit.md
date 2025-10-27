@@ -47,8 +47,16 @@ Preferred communication style: Simple, everyday language.
   - Integration of LeadInterest with BuyerInterest for comprehensive tracking
 - **Call Logging System**: Salespersons can log call activities for assigned leads with call status, duration, notes, and next follow-up dates. When logging a call with a next follow-up date, the lead's follow-up date is automatically updated.
 - **Notification System**: Real-time notification bell for salespersons showing missed follow-ups. Badge displays count of overdue leads, dropdown shows detailed list with lead information. Notifications refresh every minute and clear on logout.
-- **Navigation Structure**: Simple admin navigation with Dashboard, Leads, Performance, Credentials, Projects & Plots, and Settings. Salesperson navigation shows Dashboard, My Leads, and Plots only.
-- **Data Export**: CSV/Excel export functionality for filtered lead data.
+- **Analytics Dashboard**: Comprehensive analytics section for admin users with crisp, easy-to-understand visualizations:
+  - Overview metrics cards showing conversion rate, total revenue, active leads, and average response time
+  - Monthly performance line chart tracking leads, conversions, and revenue trends
+  - Lead source distribution pie chart showing channel effectiveness
+  - Top performers bar chart comparing salesperson conversions and revenue
+  - Date range filtering (Today, This Week, This Month, Last 3/6 Months)
+  - Export functionality for analytics data (CSV/Excel)
+  - Secure admin-only access with explicit role checking and automatic redirects
+- **Navigation Structure**: Admin navigation includes Dashboard, Leads, Analytics, Performance, Credentials, Projects & Plots, and Settings. Salesperson navigation shows Dashboard, My Leads, and Plots only.
+- **Data Export**: CSV/Excel export functionality for filtered lead data and analytics reports.
 
 ## External Dependencies
 
