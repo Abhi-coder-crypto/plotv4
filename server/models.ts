@@ -9,6 +9,7 @@ import type {
   ActivityLog,
   BuyerInterest,
   CallLog,
+  ProspectCall,
   UserRole,
   LeadStatus,
   LeadRating,
@@ -19,6 +20,7 @@ import type {
   PaymentMode,
   BookingType,
   CallStatus,
+  ProspectCallStatus,
 } from "@shared/schema";
 
 // User Model
@@ -236,3 +238,33 @@ const callLogSchema = new Schema<ICallLog>(
 );
 
 export const CallLogModel = mongoose.model<ICallLog>("CallLog", callLogSchema);
+
+// Prospect Call Model (Random Calls - Not Leads)
+interface IProspectCall extends Omit<ProspectCall, "_id">, Document {}
+
+const prospectCallSchema = new Schema<IProspectCall>(
+  {
+    salespersonId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    salespersonName: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+    contactName: String,
+    callStatus: {
+      type: String,
+      enum: ["Not Answered", "Answered - Not Interested", "Answered - Interested", "Call Back Later", "Wrong Number", "Already has Plot"],
+      required: true,
+    },
+    callDuration: Number,
+    notes: String,
+    interestedInProject: { type: Schema.Types.ObjectId, ref: "Project" },
+    interestedInCategory: {
+      type: String,
+      enum: ["Investment Plot", "Bungalow Plot", "Residential Plot", "Commercial Plot", "Open Plot"],
+    },
+    budgetRange: String,
+    convertedToLead: { type: Boolean, default: false },
+    convertedLeadId: { type: Schema.Types.ObjectId, ref: "Lead" },
+  },
+  { timestamps: true }
+);
+
+export const ProspectCallModel = mongoose.model<IProspectCall>("ProspectCall", prospectCallSchema);

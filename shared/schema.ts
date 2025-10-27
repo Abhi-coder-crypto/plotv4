@@ -302,6 +302,41 @@ export const insertCallLogSchema = z.object({
 
 export type InsertCallLog = z.infer<typeof insertCallLogSchema>;
 
+// ============= Prospect Call Schema (Random Calls - Not Leads) =============
+export const prospectCallStatuses = ["Not Answered", "Answered - Not Interested", "Answered - Interested", "Call Back Later", "Wrong Number", "Already has Plot"] as const;
+export type ProspectCallStatus = typeof prospectCallStatuses[number];
+
+export interface ProspectCall {
+  _id: string;
+  salespersonId: string;
+  salespersonName: string;
+  phoneNumber: string;
+  contactName?: string;
+  callStatus: ProspectCallStatus;
+  callDuration?: number;
+  notes?: string;
+  interestedInProject?: string;
+  interestedInCategory?: PlotCategory;
+  budgetRange?: string;
+  convertedToLead?: boolean;
+  convertedLeadId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const insertProspectCallSchema = z.object({
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+  contactName: z.string().optional(),
+  callStatus: z.enum(prospectCallStatuses),
+  callDuration: z.number().min(0, "Duration must be positive").optional(),
+  notes: z.string().optional(),
+  interestedInProject: z.string().optional(),
+  interestedInCategory: z.enum(plotCategories).optional(),
+  budgetRange: z.string().optional(),
+});
+
+export type InsertProspectCall = z.infer<typeof insertProspectCallSchema>;
+
 // ============= Dashboard Stats =============
 export interface DashboardStats {
   totalLeads: number;

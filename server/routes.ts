@@ -10,6 +10,7 @@ import {
   BuyerInterestModel,
   LeadInterestModel,
   CallLogModel,
+  ProspectCallModel,
 } from "./models";
 import { authenticateToken, requireAdmin, generateToken, type AuthRequest } from "./middleware/auth";
 import { broadcastUpdate, wsEvents } from "./websocket";
@@ -27,6 +28,7 @@ import {
   insertBuyerInterestSchema,
   insertLeadInterestSchema,
   insertCallLogSchema,
+  insertProspectCallSchema,
 } from "@shared/schema";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth, startOfWeek, format } from "date-fns";
 
@@ -1228,6 +1230,134 @@ export function registerRoutes(app: Express) {
     } catch (error: any) {
       console.error("Get all call logs error:", error);
       res.status(500).json({ message: "Failed to fetch all call logs" });
+    }
+  });
+
+  // ============= Prospect Call Routes (Random Calls - Not Leads) =============
+  app.post("/api/prospect-calls", authenticateToken, async (req, res) => {
+    try {
+      const validationResult = insertProspectCallSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ message: "Invalid request data" });
+      }
+
+      const { phoneNumber, contactName, callStatus, callDuration, notes, interestedInProject, interestedInCategory, budgetRange } = validationResult.data;
+      const authReq = req as AuthRequest;
+
+      const prospectCall = await ProspectCallModel.create({
+        salespersonId: authReq.user!._id,
+        salespersonName: authReq.user!.name,
+        phoneNumber,
+        contactName,
+        callStatus,
+        callDuration,
+        notes,
+        interestedInProject,
+        interestedInCategory,
+        budgetRange,
+        convertedToLead: false,
+      });
+
+      await ActivityLogModel.create({
+        userId: authReq.user!._id,
+        userName: authReq.user!.name,
+        action: "Prospect Call Logged",
+        entityType: "lead",
+        entityId: prospectCall._id,
+        details: `${callStatus} - ${phoneNumber} ${contactName ? `(${contactName})` : ''}`,
+      });
+
+      broadcastUpdate(wsEvents.METRICS_UPDATED, {
+        salespersonId: authReq.user!._id,
+      });
+
+      res.status(201).json(prospectCall);
+    } catch (error: any) {
+      console.error("Create prospect call error:", error);
+      res.status(500).json({ message: "Failed to create prospect call" });
+    }
+  });
+
+  app.get("/api/prospect-calls/salesperson/:salespersonId", authenticateToken, async (req, res) => {
+    try {
+      const { salespersonId } = req.params;
+      const prospectCalls = await ProspectCallModel.find({ salespersonId })
+        .populate("interestedInProject", "name location")
+        .sort({ createdAt: -1 });
+      res.json(prospectCalls);
+    } catch (error: any) {
+      console.error("Get salesperson prospect calls error:", error);
+      res.status(500).json({ message: "Failed to fetch prospect calls" });
+    }
+  });
+
+  app.get("/api/prospect-calls/all", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const prospectCalls = await ProspectCallModel.find({})
+        .populate("salespersonId", "name email")
+        .populate("interestedInProject", "name location")
+        .populate("convertedLeadId", "name phone")
+        .sort({ createdAt: -1 })
+        .limit(500);
+      res.json(prospectCalls);
+    } catch (error: any) {
+      console.error("Get all prospect calls error:", error);
+      res.status(500).json({ message: "Failed to fetch all prospect calls" });
+    }
+  });
+
+  app.post("/api/prospect-calls/:id/convert", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const prospectCall = await ProspectCallModel.findById(id);
+      
+      if (!prospectCall) {
+        return res.status(404).json({ message: "Prospect call not found" });
+      }
+
+      if (prospectCall.convertedToLead) {
+        return res.status(400).json({ message: "Prospect already converted to lead" });
+      }
+
+      const authReq = req as AuthRequest;
+
+      // Create a new lead from the prospect
+      const lead = await LeadModel.create({
+        name: prospectCall.contactName || `Prospect ${prospectCall.phoneNumber}`,
+        phone: prospectCall.phoneNumber,
+        source: "Other",
+        status: prospectCall.callStatus === "Answered - Interested" ? "Interested" : "New",
+        rating: "High",
+        classification: "Inquiry",
+        assignedTo: prospectCall.salespersonId,
+        assignedBy: authReq.user!._id,
+        notes: prospectCall.notes,
+        projectId: prospectCall.interestedInProject,
+      });
+
+      // Update prospect call to mark as converted
+      await ProspectCallModel.findByIdAndUpdate(id, {
+        convertedToLead: true,
+        convertedLeadId: lead._id,
+      });
+
+      await ActivityLogModel.create({
+        userId: authReq.user!._id,
+        userName: authReq.user!.name,
+        action: "Prospect Converted to Lead",
+        entityType: "lead",
+        entityId: lead._id,
+        details: `Converted prospect ${prospectCall.phoneNumber} to lead ${lead.name}`,
+      });
+
+      broadcastUpdate(wsEvents.METRICS_UPDATED, {
+        salespersonId: prospectCall.salespersonId,
+      });
+
+      res.json({ lead, prospectCall });
+    } catch (error: any) {
+      console.error("Convert prospect to lead error:", error);
+      res.status(500).json({ message: "Failed to convert prospect to lead" });
     }
   });
 
