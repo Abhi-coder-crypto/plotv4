@@ -210,8 +210,19 @@ export function registerRoutes(app: Express) {
   app.get("/api/leads", authenticateToken, async (req, res) => {
     try {
       const authReq = req as AuthRequest;
-      // Admins see all leads, Salespersons see all leads (admin leads + their own)
-      const leads = await LeadModel.find({})
+      // Admins see all leads
+      // Salespersons see their assigned leads + unassigned leads (but NOT leads assigned to others)
+      const query = authReq.user!.role === "admin" 
+        ? {} 
+        : { 
+            $or: [
+              { assignedTo: authReq.user!._id },
+              { assignedTo: null },
+              { assignedTo: { $exists: false } }
+            ]
+          };
+      
+      const leads = await LeadModel.find(query)
         .populate("assignedTo", "name email")
         .populate("assignedBy", "name email")
         .sort({ createdAt: -1 });

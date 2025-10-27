@@ -938,10 +938,16 @@ export default function Leads() {
         <Tabs defaultValue="my-leads" className="w-full">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="my-leads" data-testid="tab-my-leads">
-              My Leads ({myLeads?.length || 0})
+              <div className="flex flex-col items-start">
+                <span className="font-medium">My Assigned Leads</span>
+                <span className="text-xs text-muted-foreground">({myLeads?.length || 0}) leads assigned to you</span>
+              </div>
             </TabsTrigger>
             <TabsTrigger value="other-leads" data-testid="tab-other-leads">
-              Other Leads ({otherLeads?.length || 0})
+              <div className="flex flex-col items-start">
+                <span className="font-medium">Unassigned Leads</span>
+                <span className="text-xs text-muted-foreground">({otherLeads?.length || 0}) available to assign</span>
+              </div>
             </TabsTrigger>
           </TabsList>
           <TabsContent value="my-leads" className="mt-4">
