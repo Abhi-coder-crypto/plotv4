@@ -50,9 +50,9 @@ export function AppSidebar() {
 
   const salespersonItems = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
-    { title: "My Leads", url: "/leads", icon: ClipboardList },
+    { title: "My Assigned Leads", url: "/leads", icon: ClipboardList },
     { title: "Prospect Calls", url: "/prospect-calls", icon: Phone },
-    { title: "Plots", url: "/plots", icon: Building2 },
+    { title: "Available Plots", url: "/plots", icon: Building2 },
   ];
 
   return (
