@@ -20,10 +20,9 @@ export function AppSidebar() {
   const adminItems = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "Leads", url: "/leads", icon: ClipboardList },
-    { title: "Salesperson Performance", url: "/performance", icon: BarChart3 },
+    { title: "Performance", url: "/performance", icon: BarChart3 },
     { title: "Credentials", url: "/salespersons", icon: Users },
     { title: "Projects & Plots", url: "/plots", icon: Building2 },
-    { title: "Analytics", url: "/analytics", icon: BarChart3 },
     { title: "Settings", url: "/settings", icon: Settings },
   ];
 
