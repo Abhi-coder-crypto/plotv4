@@ -138,10 +138,10 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {overviewLoading ? (
             <>
-              {[...Array(8)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <Card key={i}>
                   <CardHeader className="pb-3">
                     <Skeleton className="h-4 w-24" />
@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
                     {overview?.convertedLeads || 0}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    {overview?.conversionRate || "0.00"}% conversion rate
+                    {overview?.conversionRate || "0.00"}% rate
                   </p>
                 </CardContent>
               </Card>
@@ -200,24 +200,7 @@ export default function AnalyticsPage() {
                     ₹{(overview?.totalRevenue || 0).toLocaleString()}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    {overview?.totalBookings || 0} bookings
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    Team Size
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold" data-testid="stat-team-size">
-                    {overview?.totalSalespersons || 0}
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    Active salespersons
+                    Total earnings
                   </p>
                 </CardContent>
               </Card>
@@ -239,23 +222,6 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 border-indigo-200 dark:border-indigo-800">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
-                    Avg Response
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold" data-testid="stat-avg-response">
-                    {overview?.avgResponseTime || 0}h
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    Average response time
-                  </p>
-                </CardContent>
-              </Card>
-
               <Card className="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900 border-teal-200 dark:border-teal-800">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -268,24 +234,7 @@ export default function AnalyticsPage() {
                     {overview?.totalBookings || 0}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    Completed bookings
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 border-orange-200 dark:border-orange-800">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Award className="h-4 w-4" />
-                    Success Rate
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold" data-testid="stat-success-rate">
-                    {overview?.conversionRate || "0.00"}%
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    Lead to booking
+                    Completed
                   </p>
                 </CardContent>
               </Card>

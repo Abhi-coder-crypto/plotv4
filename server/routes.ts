@@ -2085,27 +2085,11 @@ export function registerRoutes(app: Express) {
     try {
       const { salespersonId } = req.params;
       
-      const leads = await LeadModel.find({ assignedTo: salespersonId })
-        .populate("assignedTo", "name email")
-        .sort({ updatedAt: -1 });
+      const callLogs = await CallLogModel.find({ salespersonId })
+        .populate("leadId", "name phone email")
+        .sort({ createdAt: -1 });
 
-      const formattedContacts = leads.map(lead => ({
-        id: String(lead._id),
-        name: lead.name,
-        email: lead.email || "",
-        phone: lead.phone,
-        status: lead.status,
-        rating: lead.rating,
-        source: lead.source,
-        contactedDate: lead.createdAt.toISOString(),
-        lastContactDate: lead.updatedAt.toISOString(),
-        salespersonName: (lead.assignedTo as any)?.name || "",
-        salespersonEmail: (lead.assignedTo as any)?.email || "",
-        notes: lead.notes,
-        followUpDate: lead.followUpDate ? lead.followUpDate.toISOString() : undefined,
-      }));
-
-      res.json(formattedContacts);
+      res.json(callLogs);
     } catch (error: any) {
       console.error("Customer contacts error:", error);
       res.status(500).json({ message: "Failed to fetch customer contacts" });
