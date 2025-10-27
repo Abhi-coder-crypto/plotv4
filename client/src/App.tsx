@@ -16,6 +16,7 @@ import SalespersonDashboard from "@/pages/salesperson-dashboard";
 import Leads from "@/pages/leads";
 import Salespersons from "@/pages/salespersons";
 import SalespersonPerformancePage from "@/pages/salesperson-performance";
+import Analytics from "@/pages/analytics";
 import Plots from "@/pages/plots";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
@@ -32,6 +33,23 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   }, [isAuthenticated, setLocation]);
 
   if (!isAuthenticated) return null;
+
+  return <Component />;
+}
+
+function AdminRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated, isAdmin } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLocation("/login");
+    } else if (!isAdmin) {
+      setLocation("/dashboard");
+    }
+  }, [isAuthenticated, isAdmin, setLocation]);
+
+  if (!isAuthenticated || !isAdmin) return null;
 
   return <Component />;
 }
@@ -57,12 +75,9 @@ function Router() {
     <Switch>
       <Route path="/dashboard" component={() => <ProtectedRoute component={DashboardRoute} />} />
       <Route path="/leads" component={() => <ProtectedRoute component={Leads} />} />
-      {isAdmin && (
-        <Route path="/performance" component={() => <ProtectedRoute component={SalespersonPerformancePage} />} />
-      )}
-      {isAdmin && (
-        <Route path="/salespersons" component={() => <ProtectedRoute component={Salespersons} />} />
-      )}
+      <Route path="/analytics" component={() => <AdminRoute component={Analytics} />} />
+      <Route path="/performance" component={() => <AdminRoute component={SalespersonPerformancePage} />} />
+      <Route path="/salespersons" component={() => <AdminRoute component={Salespersons} />} />
       <Route path="/plots" component={() => <ProtectedRoute component={Plots} />} />
       <Route path="/settings" component={() => <ProtectedRoute component={Settings} />} />
       <Route path="/" component={() => <ProtectedRoute component={DashboardRoute} />} />

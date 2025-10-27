@@ -1,4 +1,4 @@
-import { Home, Users, Building2, ClipboardList, Settings, LogOut, User, BarChart3 } from "lucide-react";
+import { Home, Users, Building2, ClipboardList, Settings, LogOut, User, BarChart3, LineChart } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,7 @@ export function AppSidebar() {
   const adminItems = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "Leads", url: "/leads", icon: ClipboardList },
+    { title: "Analytics", url: "/analytics", icon: LineChart },
     { title: "Performance", url: "/performance", icon: BarChart3 },
     { title: "Credentials", url: "/salespersons", icon: Users },
     { title: "Projects & Plots", url: "/plots", icon: Building2 },
