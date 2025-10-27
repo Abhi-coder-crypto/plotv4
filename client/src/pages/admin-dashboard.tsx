@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle, Home, DollarSign, Calendar } from "lucide-react";
+import { CheckCircle, Home, DollarSign, Calendar, Users } from "lucide-react";
 import { StatCard } from "@/components/stat-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
