@@ -14,16 +14,17 @@ export async function connectDB() {
   }
 
   if (!MONGODB_URI) {
-    throw new Error("MONGODB_URI environment variable is not defined");
+    console.warn("MONGODB_URI environment variable is not defined - running without database");
+    return;
   }
 
   try {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 });
     isConnected = true;
     console.log("MongoDB connected successfully");
   } catch (error) {
     console.error("MongoDB connection error:", error);
-    throw error;
+    console.log("Continuing without database connection...");
   }
 }
 
