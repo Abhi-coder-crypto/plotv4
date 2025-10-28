@@ -14,6 +14,7 @@ import Login from "@/pages/login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import SalespersonDashboard from "@/pages/salesperson-dashboard";
 import Leads from "@/pages/leads";
+import Pipeline from "@/pages/pipeline";
 import Salespersons from "@/pages/salespersons";
 import SalespersonPerformancePage from "@/pages/salesperson-performance";
 import Analytics from "@/pages/analytics";
@@ -76,6 +77,7 @@ function Router() {
     <Switch>
       <Route path="/dashboard" component={() => <ProtectedRoute component={DashboardRoute} />} />
       <Route path="/leads" component={() => <ProtectedRoute component={Leads} />} />
+      <Route path="/pipeline" component={() => <ProtectedRoute component={Pipeline} />} />
       <Route path="/prospect-calls" component={() => <ProtectedRoute component={ProspectCalls} />} />
       <Route path="/analytics" component={() => <AdminRoute component={Analytics} />} />
       <Route path="/performance" component={() => <AdminRoute component={SalespersonPerformancePage} />} />

@@ -1,4 +1,4 @@
-import { Home, Users, Building2, ClipboardList, Settings, LogOut, User, BarChart3, LineChart, LayoutDashboard, UserCog, Phone } from "lucide-react";
+import { Home, Users, Building2, ClipboardList, Settings, LogOut, User, BarChart3, LineChart, LayoutDashboard, UserCog, Phone, Workflow } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +29,7 @@ export function AppSidebar() {
       label: "Sales Management",
       items: [
         { title: "Leads", url: "/leads", icon: ClipboardList },
+        { title: "Pipeline", url: "/pipeline", icon: Workflow },
         { title: "Salespersons", url: "/salespersons", icon: Users },
         { title: "Projects & Plots", url: "/plots", icon: Building2 },
       ],
@@ -51,6 +52,7 @@ export function AppSidebar() {
   const salespersonItems = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "My Assigned Leads", url: "/leads", icon: ClipboardList },
+    { title: "Pipeline", url: "/pipeline", icon: Workflow },
     { title: "Prospect Calls", url: "/prospect-calls", icon: Phone },
     { title: "Available Plots", url: "/plots", icon: Building2 },
   ];

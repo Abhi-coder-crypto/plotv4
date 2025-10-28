@@ -44,7 +44,7 @@ export default function SalespersonDashboard() {
             My Performance Dashboard
           </h1>
           <p className="text-white/90 text-lg">
-            Track your leads, conversions, and earnings 🚀
+            Track your leads, conversions, and earnings
           </p>
         </div>
         {/* Decorative elements */}
@@ -56,19 +56,13 @@ export default function SalespersonDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="card-hover border-none glass shadow-xl animate-fade-in-up" data-testid="card-assigned-leads">
           <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Assigned Leads</p>
-                <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                  {stats?.assignedLeads || 0}
-                </p>
-                <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
-                  <ClipboardList className="h-4 w-4" />
-                  <span className="font-medium">Your Pipeline</span>
-                </div>
-              </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
-                <ClipboardList className="h-8 w-8 text-white" />
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Assigned Leads</p>
+              <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                {stats?.assignedLeads || 0}
+              </p>
+              <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                <span className="font-medium">Your Pipeline</span>
               </div>
             </div>
           </CardContent>
@@ -76,19 +70,13 @@ export default function SalespersonDashboard() {
 
         <Card className="card-hover border-none glass shadow-xl animate-fade-in-up animate-delay-100" data-testid="card-followups">
           <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Today's Follow-ups</p>
-                <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-                  {stats?.todayFollowUps || 0}
-                </p>
-                <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
-                  <Calendar className="h-4 w-4" />
-                  <span className="font-medium">Scheduled</span>
-                </div>
-              </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
-                <Calendar className="h-8 w-8 text-white" />
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Today's Follow-ups</p>
+              <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
+                {stats?.todayFollowUps || 0}
+              </p>
+              <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
+                <span className="font-medium">Scheduled</span>
               </div>
             </div>
           </CardContent>
@@ -96,19 +84,13 @@ export default function SalespersonDashboard() {
 
         <Card className="card-hover border-none glass shadow-xl animate-fade-in-up animate-delay-200" data-testid="card-conversions">
           <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Conversions</p>
-                <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
-                  {stats?.convertedLeads || 0}
-                </p>
-                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                  <CheckCircle className="h-4 w-4" />
-                  <span className="font-medium">Success!</span>
-                </div>
-              </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg pulse-glow">
-                <CheckCircle className="h-8 w-8 text-white" />
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Conversions</p>
+              <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+                {stats?.convertedLeads || 0}
+              </p>
+              <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                <span className="font-medium">Success!</span>
               </div>
             </div>
           </CardContent>
@@ -116,19 +98,13 @@ export default function SalespersonDashboard() {
 
         <Card className="card-hover border-none glass shadow-xl animate-fade-in-up animate-delay-300" data-testid="card-revenue">
           <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">My Revenue</p>
-                <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-                  ₹{((stats?.totalRevenue || 0) / 100000).toFixed(1)}L
-                </p>
-                <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
-                  <DollarSign className="h-4 w-4" />
-                  <span className="font-medium">Earnings</span>
-                </div>
-              </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg">
-                <DollarSign className="h-8 w-8 text-white" />
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">My Revenue</p>
+              <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
+                ₹{((stats?.totalRevenue || 0) / 100000).toFixed(1)}L
+              </p>
+              <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                <span className="font-medium">Earnings</span>
               </div>
             </div>
           </CardContent>
@@ -139,10 +115,7 @@ export default function SalespersonDashboard() {
       <Card className="card-hover border-none glass shadow-xl animate-scale-in">
         <CardHeader className="border-b border-border/50 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-3 text-xl font-bold">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-500">
-                <Phone className="h-5 w-5 text-white" />
-              </div>
+            <CardTitle className="text-xl font-bold flex items-center gap-3">
               <span>Today's Follow-ups</span>
               {todayFollowUps && todayFollowUps.length > 0 && (
                 <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">

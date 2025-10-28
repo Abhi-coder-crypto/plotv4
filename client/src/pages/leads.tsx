@@ -274,11 +274,21 @@ export default function Leads() {
     return assignedToId === user._id;
   }) : [];
 
-  const otherLeads = !isAdmin && user ? baseFilteredLeads?.filter((lead) => {
+  const unassignedLeads = !isAdmin && user ? baseFilteredLeads?.filter((lead) => {
     const assignedToId = lead.assignedTo 
       ? (typeof lead.assignedTo === 'object' ? (lead.assignedTo as PopulatedUser)._id : lead.assignedTo)
       : null;
-    return assignedToId !== user._id;
+    return !assignedToId;
+  }) : [];
+
+  const otherAssignedLeads = !isAdmin && user ? baseFilteredLeads?.filter((lead) => {
+    const assignedToId = lead.assignedTo 
+      ? (typeof lead.assignedTo === 'object' ? (lead.assignedTo as PopulatedUser)._id : lead.assignedTo)
+      : null;
+    const addedById = lead.assignedBy 
+      ? (typeof lead.assignedBy === 'object' ? (lead.assignedBy as PopulatedUser)._id : lead.assignedBy)
+      : null;
+    return assignedToId && assignedToId !== user._id && addedById !== user._id;
   }) : [];
 
   // For admins, show all filtered leads
@@ -936,17 +946,23 @@ export default function Leads() {
       ) : (
         /* Salesperson View - Tabbed Interface */
         <Tabs defaultValue="my-leads" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-4xl grid-cols-3">
             <TabsTrigger value="my-leads" data-testid="tab-my-leads">
               <div className="flex flex-col items-start">
                 <span className="font-medium">My Assigned Leads</span>
-                <span className="text-xs text-muted-foreground">({myLeads?.length || 0}) leads assigned to you</span>
+                <span className="text-xs text-muted-foreground">({myLeads?.length || 0}) assigned to you</span>
               </div>
             </TabsTrigger>
-            <TabsTrigger value="other-leads" data-testid="tab-other-leads">
+            <TabsTrigger value="unassigned-leads" data-testid="tab-unassigned-leads">
               <div className="flex flex-col items-start">
                 <span className="font-medium">Unassigned Leads</span>
-                <span className="text-xs text-muted-foreground">({otherLeads?.length || 0}) available to assign</span>
+                <span className="text-xs text-muted-foreground">({unassignedLeads?.length || 0}) available</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="other-assigned-leads" data-testid="tab-other-assigned-leads">
+              <div className="flex flex-col items-start">
+                <span className="font-medium">Other Assigned Leads</span>
+                <span className="text-xs text-muted-foreground">({otherAssignedLeads?.length || 0}) from team</span>
               </div>
             </TabsTrigger>
           </TabsList>
@@ -961,14 +977,25 @@ export default function Leads() {
               )}
             </div>
           </TabsContent>
-          <TabsContent value="other-leads" className="mt-4">
+          <TabsContent value="unassigned-leads" className="mt-4">
             <div className="rounded-lg border border-border bg-card">
               {isLoading ? (
                 <div className="flex justify-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
               ) : (
-                renderLeadsTable(otherLeads, "No other leads available")
+                renderLeadsTable(unassignedLeads, "No unassigned leads available")
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="other-assigned-leads" className="mt-4">
+            <div className="rounded-lg border border-border bg-card">
+              {isLoading ? (
+                <div className="flex justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                renderLeadsTable(otherAssignedLeads, "No other assigned leads")
               )}
             </div>
           </TabsContent>
