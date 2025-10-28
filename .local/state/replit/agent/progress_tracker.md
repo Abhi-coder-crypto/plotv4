@@ -12,3 +12,4 @@
 [x] 12. Performance & Analytics Fixes - October 27, 2025: Fixed call logs display in Performance module (now properly shows lead details, call status, and dates), simplified Analytics page by removing unnecessary metrics (avg response, team size, duplicate success rate) and showing only 5 essential cards: Total Leads, Conversions, Revenue, Buyer Interests, and Bookings
 [x] 13. Post-Migration Verification - October 28, 2025: Workflow successfully restarted with webview output type, application running on port 5000, MongoDB connected, Vite frontend connected and operational
 [x] 14. Bug Fixes - October 28, 2025: Fixed "Added By" field to show actual salesperson who created the lead (added assignedBy field in server/routes.ts); Removed all Sparkles icons from login, admin dashboard, and salesperson dashboard pages
+[x] 15. UI Polish - October 28, 2025: Removed bouncing animation (float-icon class) from all dashboard card icons for cleaner, more professional appearance
