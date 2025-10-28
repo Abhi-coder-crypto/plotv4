@@ -221,7 +221,7 @@ export default function Pipeline() {
       </div>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Lead Details</DialogTitle>
             <DialogDescription>View complete information about this lead</DialogDescription>
@@ -229,76 +229,74 @@ export default function Pipeline() {
           {selectedLead && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-muted-foreground">Name</Label>
-                  <p className="text-foreground font-medium">{selectedLead.name}</p>
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Name</Label>
+                  <p className="text-foreground font-medium break-words">{selectedLead.name}</p>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">Phone</Label>
-                  <p className="text-foreground font-medium">{selectedLead.phone}</p>
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Phone</Label>
+                  <p className="text-foreground font-medium break-all">{selectedLead.phone}</p>
                 </div>
               </div>
-              <div>
-                <Label className="text-muted-foreground">Email</Label>
-                <p className="text-foreground font-medium">{selectedLead.email || "N/A"}</p>
+              <div className="min-w-0">
+                <Label className="text-muted-foreground text-xs">Email</Label>
+                <p className="text-foreground font-medium break-all">{selectedLead.email || "N/A"}</p>
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label className="text-muted-foreground">Source</Label>
-                  <p className="text-foreground font-medium">{selectedLead.source}</p>
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Source</Label>
+                  <p className="text-foreground font-medium truncate">{selectedLead.source}</p>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">Status</Label>
-                  <Badge className={`${stageConfig[selectedLead.status]?.badge || "bg-gray-500"}`}>
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Status</Label>
+                  <Badge className={`${stageConfig[selectedLead.status]?.badge || "bg-gray-500"} text-xs`}>
                     {selectedLead.status}
                   </Badge>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">Rating</Label>
-                  <Badge className={ratingColors[selectedLead.rating]}>
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Rating</Label>
+                  <Badge className={`${ratingColors[selectedLead.rating]} text-xs`}>
                     {selectedLead.rating}
                   </Badge>
                 </div>
               </div>
-              <div>
-                <Label className="text-muted-foreground">Follow-up Date</Label>
+              <div className="min-w-0">
+                <Label className="text-muted-foreground text-xs">Follow-up Date</Label>
                 <p className="text-foreground font-medium">
                   {selectedLead.followUpDate
                     ? format(new Date(selectedLead.followUpDate), "PPP")
                     : "Not scheduled"}
                 </p>
               </div>
-              <div>
-                <Label className="text-muted-foreground">Notes</Label>
-                <p className="text-foreground font-medium">{selectedLead.notes || "No notes"}</p>
+              <div className="min-w-0">
+                <Label className="text-muted-foreground text-xs">Notes</Label>
+                <p className="text-foreground font-medium break-words whitespace-pre-wrap">{selectedLead.notes || "No notes"}</p>
               </div>
               {selectedLead.highestOffer && selectedLead.highestOffer > 0 && (
-                <div>
-                  <Label className="text-muted-foreground">Highest Offer</Label>
-                  <p className="text-foreground font-medium text-lg">
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Highest Offer</Label>
+                  <p className="text-foreground font-bold text-lg text-primary">
                     ₹{selectedLead.highestOffer.toLocaleString()}
                   </p>
                 </div>
               )}
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-muted-foreground">Assigned To</Label>
-                  <p className="text-foreground font-medium">
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Assigned To</Label>
+                  <p className="text-foreground font-medium break-words">
                     {selectedLead.assignedTo 
-                      ? typeof selectedLead.assignedTo === 'object' 
+                      ? (typeof selectedLead.assignedTo === 'object' && selectedLead.assignedTo?.name)
                         ? (selectedLead.assignedTo as PopulatedUser).name 
-                        : 'N/A'
+                        : 'Unassigned'
                       : "Unassigned"}
                   </p>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">Added By</Label>
-                  <p className="text-foreground font-medium">
-                    {selectedLead.assignedBy
-                      ? typeof selectedLead.assignedBy === 'object'
-                        ? (selectedLead.assignedBy as PopulatedUser).name
-                        : 'N/A'
-                      : "N/A"}
+                <div className="min-w-0">
+                  <Label className="text-muted-foreground text-xs">Added By</Label>
+                  <p className="text-foreground font-medium break-words">
+                    {selectedLead.assignedBy && typeof selectedLead.assignedBy === 'object' && (selectedLead.assignedBy as PopulatedUser)?.name
+                      ? (selectedLead.assignedBy as PopulatedUser).name
+                      : "Unknown"}
                   </p>
                 </div>
               </div>
