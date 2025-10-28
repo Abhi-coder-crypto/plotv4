@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle, Home, DollarSign, Users, TrendingUp, AlertCircle, Calendar, Building2, Target, Sparkles } from "lucide-react";
+import { CheckCircle, Home, DollarSign, Users, TrendingUp, AlertCircle, Calendar, Building2, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { DashboardStats } from "@shared/schema";
@@ -12,10 +12,7 @@ export default function AdminDashboard() {
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center h-full gradient-bg-subtle">
-        <div className="relative">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent pulse-glow"></div>
-          <Sparkles className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary animate-pulse" />
-        </div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent pulse-glow"></div>
       </div>
     );
   }
@@ -25,12 +22,9 @@ export default function AdminDashboard() {
       {/* Header Section with Gradient */}
       <div className="relative overflow-hidden rounded-2xl p-8 gradient-bg">
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="h-8 w-8 text-white animate-pulse" />
-            <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg">
-              Admin Dashboard
-            </h1>
-          </div>
+          <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg mb-2">
+            Admin Dashboard
+          </h1>
           <p className="text-white/90 text-lg">
             Welcome back! Here's your business overview ✨
           </p>

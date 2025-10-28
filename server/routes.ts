@@ -301,6 +301,7 @@ export function registerRoutes(app: Express) {
       const lead = await LeadModel.create({
         ...leadData,
         assignedTo,
+        assignedBy: authReq.user!._id,
         projectId,
         plotIds,
         highestOffer,

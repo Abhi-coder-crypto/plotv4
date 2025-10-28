@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ClipboardList, Calendar, CheckCircle, DollarSign, Sparkles, Phone, TrendingUp } from "lucide-react";
+import { ClipboardList, Calendar, CheckCircle, DollarSign, Phone, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,10 +30,7 @@ export default function SalespersonDashboard() {
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center h-full gradient-bg-subtle">
-        <div className="relative">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent pulse-glow"></div>
-          <Sparkles className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary animate-pulse" />
-        </div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent pulse-glow"></div>
       </div>
     );
   }
@@ -43,12 +40,9 @@ export default function SalespersonDashboard() {
       {/* Hero Header with Gradient Background */}
       <div className="relative overflow-hidden rounded-2xl p-8 gradient-bg">
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="h-8 w-8 text-white animate-pulse" />
-            <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg">
-              My Performance Dashboard
-            </h1>
-          </div>
+          <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg mb-2">
+            My Performance Dashboard
+          </h1>
           <p className="text-white/90 text-lg">
             Track your leads, conversions, and earnings 🚀
           </p>

@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import backgroundImage from "@assets/generated_images/Real_estate_plots_buildings_aerial_f9df5abc.png";
 
-import { Building2, Loader2, Sparkles, ArrowRight } from "lucide-react";
+import { Building2, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -91,13 +91,9 @@ export default function Login() {
             <Building2 className="h-10 w-10 text-white" />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-center gap-2">
-              <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
-              <h1 className="text-4xl font-bold text-white drop-shadow-2xl">
-                Plot Management CRM
-              </h1>
-              <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
-            </div>
+            <h1 className="text-4xl font-bold text-white drop-shadow-2xl">
+              Plot Management CRM
+            </h1>
             <p className="text-white/90 text-lg drop-shadow-lg">
               Your ultimate real estate management solution ✨
             </p>
