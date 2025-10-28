@@ -75,8 +75,24 @@
 }
 
 .card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Professional card styling */
+.professional-card {
+  transition: all 0.2s ease-in-out;
+  border: 1.5px solid hsl(var(--border));
+}
+
+.professional-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Shimmer effect for loading states */

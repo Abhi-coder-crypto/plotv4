@@ -210,7 +210,9 @@ export function registerRoutes(app: Express) {
   app.get("/api/leads", authenticateToken, async (req, res) => {
     try {
       const authReq = req as AuthRequest;
-      // Both admins and salespersons see all leads
+      // Both admins and salespersons see all leads for team collaboration
+      // The frontend UI segregates leads into tabs: "My Assigned", "Unassigned", and "Other Assigned"
+      // This enables transparency and allows salespersons to see team activity
       const query = {};
       
       const leads = await LeadModel.find(query)
