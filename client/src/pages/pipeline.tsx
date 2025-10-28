@@ -150,7 +150,7 @@ export default function Pipeline() {
                   )}
                 </div>
 
-                <div className="space-y-2 flex-1 min-h-[250px] bg-muted/10 rounded-lg p-2 border border-dashed border-border/50 overflow-y-auto max-h-[600px]">
+                <div className="space-y-2.5 flex-1 min-h-[250px] bg-muted/10 rounded-lg p-3 border border-dashed border-border/50 overflow-y-auto max-h-[600px] custom-scrollbar">
                   {stageLeads.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center text-xs text-muted-foreground py-6">
@@ -162,22 +162,23 @@ export default function Pipeline() {
                     stageLeads.map((lead) => (
                       <Card
                         key={lead._id}
-                        className="hover:shadow-lg transition-all duration-200 cursor-pointer border bg-card"
+                        className="hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 bg-card/95 backdrop-blur-sm shadow-md hover:border-primary/50 group relative overflow-hidden"
                         data-testid={`card-lead-${lead._id}`}
                       >
-                        <CardContent className="p-3">
-                          <div className="space-y-2">
-                            <h4 className="font-bold text-sm text-foreground truncate" data-testid={`text-lead-name-${lead._id}`}>
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <CardContent className="p-3.5 relative z-10">
+                          <div className="space-y-2.5">
+                            <h4 className="font-bold text-sm text-foreground truncate group-hover:text-primary transition-colors" data-testid={`text-lead-name-${lead._id}`}>
                               {lead.name}
                             </h4>
                             
-                            <p className="text-xs text-muted-foreground truncate font-medium">
-                              📞 {lead.phone}
+                            <p className="text-xs text-muted-foreground truncate font-medium flex items-center gap-1.5">
+                              <span className="text-base">📞</span> {lead.phone}
                             </p>
 
                             <div className="flex items-center gap-1.5">
                               <Badge 
-                                className={`text-xs px-1.5 py-0.5 font-bold shadow-sm ${ratingColors[lead.rating]}`}
+                                className={`text-xs px-2 py-0.5 font-bold shadow-md ${ratingColors[lead.rating]}`}
                                 data-testid={`badge-rating-${lead._id}`}
                               >
                                 {lead.rating}
@@ -185,8 +186,8 @@ export default function Pipeline() {
                             </div>
 
                             {lead.highestOffer && lead.highestOffer > 0 && (
-                              <div className="pt-2 mt-2 border-t border-dashed">
-                                <div className="flex items-center justify-between">
+                              <div className="pt-2.5 mt-2.5 border-t border-border/60">
+                                <div className="flex items-center justify-between bg-primary/5 dark:bg-primary/10 rounded-md px-2.5 py-1.5">
                                   <span className="text-xs text-muted-foreground font-semibold">Offer</span>
                                   <p className="text-xs font-bold text-primary truncate ml-2" data-testid={`text-offer-${lead._id}`}>
                                     ₹{lead.highestOffer.toLocaleString()}

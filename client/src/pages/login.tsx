@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import backgroundImage from "@assets/generated_images/Real_estate_plots_buildings_aerial_f9df5abc.png";
+import backgroundImage from "@assets/stock_images/luxury_real_estate_d_064885be.jpg";
 
 import { Building2, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
