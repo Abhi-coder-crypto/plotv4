@@ -125,14 +125,18 @@ export default function Pipeline() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-auto">
-          {stages.map((stage) => {
+        <div className="flex gap-0 overflow-x-auto pb-4">
+          {stages.map((stage, index) => {
             const stageLeads = getLeadsByStage(stage);
             const totalValue = stageLeads.reduce((sum, lead) => sum + (lead.highestOffer || 0), 0);
             const config = stageConfig[stage];
+            const isLast = index === stages.length - 1;
 
             return (
-              <div key={stage} className="flex flex-col min-w-[200px] max-w-[280px]">
+              <div 
+                key={stage} 
+                className={`flex flex-col min-w-[250px] max-w-[280px] px-4 ${!isLast ? 'border-r-2 border-border' : ''}`}
+              >
                 <div className={`mb-3 p-3 rounded-lg ${config.gradient} border ${config.border} shadow-md`}>
                   <div className="flex items-center justify-between mb-1.5">
                     <h3 className="text-sm font-bold text-foreground truncate">{stage}</h3>
@@ -154,7 +158,6 @@ export default function Pipeline() {
                   {stageLeads.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center text-xs text-muted-foreground py-6">
-                        <div className="mb-1 text-2xl opacity-20">📋</div>
                         <p className="font-medium">No leads</p>
                       </div>
                     </div>
@@ -172,8 +175,8 @@ export default function Pipeline() {
                               {lead.name}
                             </h4>
                             
-                            <p className="text-xs text-muted-foreground truncate font-medium flex items-center gap-1.5">
-                              <span className="text-base">📞</span> {lead.phone}
+                            <p className="text-xs text-muted-foreground truncate font-medium">
+                              {lead.phone}
                             </p>
 
                             <div className="flex items-center gap-1.5">
