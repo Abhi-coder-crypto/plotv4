@@ -294,9 +294,14 @@ export default function Pipeline() {
                 <div className="min-w-0">
                   <Label className="text-muted-foreground text-xs">Added By</Label>
                   <p className="text-foreground font-medium break-words">
-                    {selectedLead.assignedBy && typeof selectedLead.assignedBy === 'object' && (selectedLead.assignedBy as PopulatedUser)?.name
-                      ? (selectedLead.assignedBy as PopulatedUser).name
-                      : "Unknown"}
+                    {(() => {
+                      if (!selectedLead.assignedBy) return "Not recorded";
+                      if (typeof selectedLead.assignedBy === 'object') {
+                        const user = selectedLead.assignedBy as PopulatedUser;
+                        return user?.name || "Not recorded";
+                      }
+                      return "Not recorded";
+                    })()}
                   </p>
                 </div>
               </div>
