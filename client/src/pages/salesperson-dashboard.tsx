@@ -67,7 +67,7 @@ export default function SalespersonDashboard() {
                   <span className="font-medium">Your Pipeline</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
                 <ClipboardList className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -87,7 +87,7 @@ export default function SalespersonDashboard() {
                   <span className="font-medium">Scheduled</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
                 <Calendar className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function SalespersonDashboard() {
                   <span className="font-medium">Success!</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg pulse-glow float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg pulse-glow">
                 <CheckCircle className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function SalespersonDashboard() {
                   <span className="font-medium">Earnings</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg">
                 <DollarSign className="h-8 w-8 text-white" />
               </div>
             </div>

@@ -49,7 +49,7 @@ export default function AdminDashboard() {
                   <span className="font-medium">Active Pipeline</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
                 <Users className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
                   <span className="font-medium">Success Stories</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg">
                 <CheckCircle className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
                   <span className="font-medium">Ready to Book</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
                 <Home className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                   <span className="font-medium">Total Earnings</span>
                 </div>
               </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg float-icon">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg">
                 <DollarSign className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center space-y-3 p-4 rounded-xl hover:bg-accent/50 transition-all cursor-pointer">
                 <div className="flex justify-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg float-icon">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
                     <Building2 className="h-7 w-7 text-white" />
                   </div>
                 </div>
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
               
               <div className="text-center space-y-3 p-4 rounded-xl hover:bg-accent/50 transition-all cursor-pointer">
                 <div className="flex justify-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg float-icon">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg">
                     <CheckCircle className="h-7 w-7 text-white" />
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export default function AdminDashboard() {
               
               <div className="text-center space-y-3 p-4 rounded-xl hover:bg-accent/50 transition-all cursor-pointer">
                 <div className="flex justify-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg float-icon">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg">
                     <Calendar className="h-7 w-7 text-white" />
                   </div>
                 </div>

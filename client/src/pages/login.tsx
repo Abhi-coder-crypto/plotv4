@@ -87,7 +87,7 @@ export default function Login() {
       <div className="w-full max-w-md relative z-10 animate-fade-in-up">
         {/* Hero Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 mb-6 shadow-2xl float-icon pulse-glow">
+          <div className="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 mb-6 shadow-2xl pulse-glow">
             <Building2 className="h-10 w-10 text-white" />
           </div>
           <div className="space-y-2">
