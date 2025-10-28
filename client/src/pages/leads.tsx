@@ -285,10 +285,7 @@ export default function Leads() {
     const assignedToId = lead.assignedTo 
       ? (typeof lead.assignedTo === 'object' ? (lead.assignedTo as PopulatedUser)._id : lead.assignedTo)
       : null;
-    const addedById = lead.assignedBy 
-      ? (typeof lead.assignedBy === 'object' ? (lead.assignedBy as PopulatedUser)._id : lead.assignedBy)
-      : null;
-    return assignedToId && assignedToId !== user._id && addedById !== user._id;
+    return assignedToId && assignedToId !== user._id;
   }) : [];
 
   // For admins, show all filtered leads

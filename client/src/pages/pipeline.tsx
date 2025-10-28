@@ -5,19 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth";
-import type { Lead } from "@shared/schema";
+import type { Lead, PopulatedUser } from "@shared/schema";
 import { format } from "date-fns";
 
-const stages = ["New", "Contacted", "Qualified", "Proposal", "Negotiation", "Closed Won", "Closed Lost"];
+const stages = ["New", "Contacted", "Interested", "Site Visit", "Booked", "Lost"];
 
 const stageColors: Record<string, string> = {
   "New": "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20",
   "Contacted": "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20",
-  "Qualified": "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/20",
-  "Proposal": "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20",
-  "Negotiation": "bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/20",
-  "Closed Won": "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
-  "Closed Lost": "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20",
+  "Interested": "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
+  "Site Visit": "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/20",
+  "Booked": "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
+  "Lost": "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20",
 };
 
 const ratingColors: Record<string, string> = {
@@ -37,7 +36,12 @@ export default function Pipeline() {
 
   const filteredLeads = isAdmin 
     ? leads 
-    : leads.filter(lead => lead.assignedTo === user?._id);
+    : leads.filter(lead => {
+        const assignedToId = lead.assignedTo 
+          ? (typeof lead.assignedTo === 'object' ? (lead.assignedTo as PopulatedUser)._id : lead.assignedTo)
+          : null;
+        return assignedToId === user?._id;
+      });
 
   const searchedLeads = filteredLeads.filter(lead =>
     lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,9 +62,9 @@ export default function Pipeline() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="p-8">
-        <div className="mb-8">
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-[1800px] mx-auto">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-foreground" data-testid="text-page-title">
             {isAdmin ? "Sales Pipeline" : "My Pipeline"}
           </h1>
@@ -84,63 +88,53 @@ export default function Pipeline() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {stages.map((stage) => {
             const stageLeads = getLeadsByStage(stage);
             const totalValue = stageLeads.reduce((sum, lead) => sum + (lead.highestOffer || 0), 0);
 
             return (
-              <div key={stage} className="flex flex-col">
-                <Card className="mb-3">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-semibold">
-                      {stage}
-                    </CardTitle>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
-                      <span data-testid={`text-stage-count-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
-                        {stageLeads.length} leads
-                      </span>
-                      <span data-testid={`text-stage-value-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
-                        ₹{totalValue.toLocaleString()}
-                      </span>
-                    </div>
-                  </CardHeader>
-                </Card>
+              <div key={stage} className="flex flex-col min-h-[200px]">
+                <div className="mb-3 p-3 rounded-lg bg-card border border-border shadow-sm">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-sm font-bold text-foreground">{stage}</h3>
+                    <Badge variant="secondary" className="text-xs font-semibold" data-testid={`text-stage-count-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
+                      {stageLeads.length}
+                    </Badge>
+                  </div>
+                  {totalValue > 0 && (
+                    <p className="text-xs text-muted-foreground" data-testid={`text-stage-value-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
+                      ₹{totalValue.toLocaleString()}
+                    </p>
+                  )}
+                </div>
 
-                <div className="space-y-3 flex-1">
+                <div className="space-y-2 flex-1">
                   {stageLeads.length === 0 ? (
-                    <div className="text-center text-sm text-muted-foreground py-8">
+                    <div className="text-center text-xs text-muted-foreground py-6 bg-muted/30 rounded-lg border border-dashed border-border">
                       No leads
                     </div>
                   ) : (
                     stageLeads.map((lead) => (
                       <Card
                         key={lead._id}
-                        className="hover:shadow-md transition-shadow cursor-pointer"
+                        className="hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer border"
                         data-testid={`card-lead-${lead._id}`}
                       >
-                        <CardContent className="p-4">
-                          <div className="space-y-2">
-                            <h3 className="font-semibold text-sm truncate" data-testid={`text-lead-name-${lead._id}`}>
+                        <CardContent className="p-3">
+                          <div className="space-y-1.5">
+                            <h4 className="font-semibold text-sm text-foreground truncate" data-testid={`text-lead-name-${lead._id}`}>
                               {lead.name}
-                            </h3>
+                            </h4>
                             
-                            {lead.email && (
-                              <p className="text-xs text-muted-foreground truncate">
-                                {lead.email}
-                              </p>
-                            )}
-                            
-                            {lead.phone && (
-                              <p className="text-xs text-muted-foreground">
-                                {lead.phone}
-                              </p>
-                            )}
+                            <p className="text-xs text-muted-foreground truncate">
+                              {lead.phone}
+                            </p>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <Badge 
                                 variant="outline" 
-                                className={`text-xs ${ratingColors[lead.rating]}`}
+                                className={`text-xs px-1.5 py-0 ${ratingColors[lead.rating]}`}
                                 data-testid={`badge-rating-${lead._id}`}
                               >
                                 {lead.rating}
@@ -148,7 +142,7 @@ export default function Pipeline() {
                               {lead.classification && (
                                 <Badge 
                                   variant="outline" 
-                                  className="text-xs"
+                                  className="text-xs px-1.5 py-0"
                                   data-testid={`badge-classification-${lead._id}`}
                                 >
                                   {lead.classification}
@@ -157,16 +151,12 @@ export default function Pipeline() {
                             </div>
 
                             {lead.highestOffer && lead.highestOffer > 0 && (
-                              <div className="pt-2 border-t">
-                                <p className="text-xs font-semibold text-primary" data-testid={`text-offer-${lead._id}`}>
+                              <div className="pt-1.5 border-t">
+                                <p className="text-xs font-bold text-primary" data-testid={`text-offer-${lead._id}`}>
                                   ₹{lead.highestOffer.toLocaleString()}
                                 </p>
                               </div>
                             )}
-
-                            <div className="text-xs text-muted-foreground pt-1">
-                              {format(new Date(lead.createdAt), "MMM dd, yyyy")}
-                            </div>
                           </div>
                         </CardContent>
                       </Card>
