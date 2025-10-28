@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, TrendingUp } from "lucide-react";
+import { Search, TrendingUp, Eye, Phone, Mail, Calendar, User } from "lucide-react";
+import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import type { Lead, PopulatedUser } from "@shared/schema";
+import { format } from "date-fns";
 
 const stages = ["New", "Contacted", "Interested", "Site Visit", "Booked", "Lost"];
 
@@ -52,6 +56,8 @@ const ratingColors: Record<string, string> = {
 
 export default function Pipeline() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const { user, isAdmin } = useAuth();
 
   const { data: leads = [], isLoading } = useQuery<Lead[]>({
@@ -165,6 +171,10 @@ export default function Pipeline() {
                     stageLeads.map((lead) => (
                       <Card
                         key={lead._id}
+                        onClick={() => {
+                          setSelectedLead(lead);
+                          setIsViewDialogOpen(true);
+                        }}
                         className="hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 bg-card/95 backdrop-blur-sm shadow-md hover:border-primary/50 group relative overflow-hidden"
                         data-testid={`card-lead-${lead._id}`}
                       >
@@ -209,6 +219,93 @@ export default function Pipeline() {
           })}
         </div>
       </div>
+
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Lead Details</DialogTitle>
+            <DialogDescription>View complete information about this lead</DialogDescription>
+          </DialogHeader>
+          {selectedLead && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-muted-foreground">Name</Label>
+                  <p className="text-foreground font-medium">{selectedLead.name}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Phone</Label>
+                  <p className="text-foreground font-medium">{selectedLead.phone}</p>
+                </div>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Email</Label>
+                <p className="text-foreground font-medium">{selectedLead.email || "N/A"}</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-muted-foreground">Source</Label>
+                  <p className="text-foreground font-medium">{selectedLead.source}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Status</Label>
+                  <Badge className={`${stageConfig[selectedLead.status]?.badge || "bg-gray-500"}`}>
+                    {selectedLead.status}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Rating</Label>
+                  <Badge className={ratingColors[selectedLead.rating]}>
+                    {selectedLead.rating}
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Follow-up Date</Label>
+                <p className="text-foreground font-medium">
+                  {selectedLead.followUpDate
+                    ? format(new Date(selectedLead.followUpDate), "PPP")
+                    : "Not scheduled"}
+                </p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Notes</Label>
+                <p className="text-foreground font-medium">{selectedLead.notes || "No notes"}</p>
+              </div>
+              {selectedLead.highestOffer && selectedLead.highestOffer > 0 && (
+                <div>
+                  <Label className="text-muted-foreground">Highest Offer</Label>
+                  <p className="text-foreground font-medium text-lg">
+                    ₹{selectedLead.highestOffer.toLocaleString()}
+                  </p>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-muted-foreground">Assigned To</Label>
+                  <p className="text-foreground font-medium">
+                    {selectedLead.assignedTo 
+                      ? typeof selectedLead.assignedTo === 'object' 
+                        ? (selectedLead.assignedTo as PopulatedUser).name 
+                        : 'N/A'
+                      : "Unassigned"}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Added By</Label>
+                  <p className="text-foreground font-medium">
+                    {selectedLead.assignedBy
+                      ? typeof selectedLead.assignedBy === 'object'
+                        ? (selectedLead.assignedBy as PopulatedUser).name
+                        : 'N/A'
+                      : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

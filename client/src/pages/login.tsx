@@ -53,7 +53,7 @@ export default function Login() {
       });
       
       // Use window.location for reliable redirect
-      window.location.href = "/";
+      window.location.href = "/dashboard";
     } catch (error: any) {
       toast({
         title: "Login failed",
