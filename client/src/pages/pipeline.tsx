@@ -88,25 +88,25 @@ export default function Pipeline() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 md:p-6">
       <div className="max-w-[1800px] mx-auto">
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground" data-testid="text-page-title">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground" data-testid="text-page-title">
                 {isAdmin ? "Sales Pipeline" : "My Pipeline"}
               </h1>
-              <p className="text-muted-foreground mt-2 text-lg">
+              <p className="text-muted-foreground mt-1 text-sm md:text-base">
                 {isAdmin 
                   ? "Track all leads through the sales pipeline" 
                   : "Track your assigned leads through the sales pipeline"}
               </p>
             </div>
-            <div className="flex items-center gap-4 bg-card border border-border rounded-lg px-6 py-4 shadow-sm">
-              <TrendingUp className="h-6 w-6 text-primary" />
-              <div>
+            <div className="flex items-center gap-3 bg-card border border-border rounded-lg px-4 py-3 shadow-sm">
+              <TrendingUp className="h-5 w-5 text-primary flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="text-xs text-muted-foreground font-medium">Total Pipeline Value</p>
-                <p className="text-2xl font-bold text-foreground">₹{totalPipelineValue.toLocaleString()}</p>
+                <p className="text-lg md:text-xl font-bold text-foreground truncate">₹{totalPipelineValue.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -114,47 +114,47 @@ export default function Pipeline() {
 
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search leads by name, email, or phone..."
+              placeholder="Search leads..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 h-12 text-base border-2 focus:ring-2 focus:ring-primary/20"
+              className="pl-10 h-10 text-sm"
               data-testid="input-search-leads"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-auto">
           {stages.map((stage) => {
             const stageLeads = getLeadsByStage(stage);
             const totalValue = stageLeads.reduce((sum, lead) => sum + (lead.highestOffer || 0), 0);
             const config = stageConfig[stage];
 
             return (
-              <div key={stage} className="flex flex-col">
-                <div className={`mb-4 p-4 rounded-xl ${config.gradient} border-2 ${config.border} shadow-lg`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-base font-bold text-foreground">{stage}</h3>
-                    <Badge className={`${config.badge} text-sm font-bold px-3 py-1 shadow-md`} data-testid={`text-stage-count-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
+              <div key={stage} className="flex flex-col min-w-[200px] max-w-[280px]">
+                <div className={`mb-3 p-3 rounded-lg ${config.gradient} border ${config.border} shadow-md`}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <h3 className="text-sm font-bold text-foreground truncate">{stage}</h3>
+                    <Badge className={`${config.badge} text-xs font-bold px-2 py-0.5 shadow-sm flex-shrink-0`} data-testid={`text-stage-count-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
                       {stageLeads.length}
                     </Badge>
                   </div>
                   {totalValue > 0 && (
-                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-current/10">
-                      <TrendingUp className="h-3.5 w-3.5 text-foreground/70" />
-                      <p className="text-sm font-bold text-foreground" data-testid={`text-stage-value-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
+                    <div className="flex items-center gap-1 mt-1.5 pt-1.5 border-t border-current/10">
+                      <TrendingUp className="h-3 w-3 text-foreground/70 flex-shrink-0" />
+                      <p className="text-xs font-bold text-foreground truncate" data-testid={`text-stage-value-${stage.toLowerCase().replace(/\s+/g, "-")}`}>
                         ₹{totalValue.toLocaleString()}
                       </p>
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-3 flex-1 min-h-[300px] bg-muted/10 rounded-xl p-3 border-2 border-dashed border-border/50">
+                <div className="space-y-2 flex-1 min-h-[250px] bg-muted/10 rounded-lg p-2 border border-dashed border-border/50 overflow-y-auto max-h-[600px]">
                   {stageLeads.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
-                      <div className="text-center text-sm text-muted-foreground py-8">
-                        <div className="mb-2 text-4xl opacity-20">📋</div>
+                      <div className="text-center text-xs text-muted-foreground py-6">
+                        <div className="mb-1 text-2xl opacity-20">📋</div>
                         <p className="font-medium">No leads</p>
                       </div>
                     </div>
@@ -162,42 +162,33 @@ export default function Pipeline() {
                     stageLeads.map((lead) => (
                       <Card
                         key={lead._id}
-                        className="hover:shadow-xl transition-all duration-200 hover:scale-[1.03] cursor-pointer border-2 bg-card/95 backdrop-blur"
+                        className="hover:shadow-lg transition-all duration-200 cursor-pointer border bg-card"
                         data-testid={`card-lead-${lead._id}`}
                       >
-                        <CardContent className="p-4">
-                          <div className="space-y-2.5">
-                            <h4 className="font-bold text-base text-foreground truncate" data-testid={`text-lead-name-${lead._id}`}>
+                        <CardContent className="p-3">
+                          <div className="space-y-2">
+                            <h4 className="font-bold text-sm text-foreground truncate" data-testid={`text-lead-name-${lead._id}`}>
                               {lead.name}
                             </h4>
                             
-                            <p className="text-sm text-muted-foreground truncate font-medium">
+                            <p className="text-xs text-muted-foreground truncate font-medium">
                               📞 {lead.phone}
                             </p>
 
-                            <div className="flex items-center gap-2 flex-wrap">
+                            <div className="flex items-center gap-1.5">
                               <Badge 
-                                className={`text-xs px-2 py-1 font-bold shadow-sm ${ratingColors[lead.rating]}`}
+                                className={`text-xs px-1.5 py-0.5 font-bold shadow-sm ${ratingColors[lead.rating]}`}
                                 data-testid={`badge-rating-${lead._id}`}
                               >
                                 {lead.rating}
                               </Badge>
-                              {lead.classification && (
-                                <Badge 
-                                  variant="outline" 
-                                  className="text-xs px-2 py-1 font-semibold border-2"
-                                  data-testid={`badge-classification-${lead._id}`}
-                                >
-                                  {lead.classification}
-                                </Badge>
-                              )}
                             </div>
 
                             {lead.highestOffer && lead.highestOffer > 0 && (
-                              <div className="pt-2.5 mt-2.5 border-t-2 border-dashed">
+                              <div className="pt-2 mt-2 border-t border-dashed">
                                 <div className="flex items-center justify-between">
                                   <span className="text-xs text-muted-foreground font-semibold">Offer</span>
-                                  <p className="text-base font-bold text-primary" data-testid={`text-offer-${lead._id}`}>
+                                  <p className="text-xs font-bold text-primary truncate ml-2" data-testid={`text-offer-${lead._id}`}>
                                     ₹{lead.highestOffer.toLocaleString()}
                                   </p>
                                 </div>

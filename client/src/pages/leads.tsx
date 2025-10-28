@@ -50,7 +50,7 @@ import { exportToCSV, exportToExcel } from "@/lib/csv-export";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertLeadSchema, leadSources, leadStatuses, leadRatings, leadClassifications, insertCallLogSchema, callStatuses } from "@shared/schema";
+import { insertLeadSchema, leadSources, leadStatuses, leadRatings, insertCallLogSchema, callStatuses } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -394,7 +394,6 @@ export default function Leads() {
             <TableHead>Source</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Rating</TableHead>
-            <TableHead>Classification</TableHead>
             {isAdmin && <TableHead>Added By</TableHead>}
             <TableHead>Assigned To</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -424,18 +423,6 @@ export default function Leads() {
                 <Badge className={getRatingColor(lead.rating)} data-testid={`badge-rating-${lead._id}`}>
                   {lead.rating}
                 </Badge>
-              </TableCell>
-              <TableCell>
-                {lead.classification ? (
-                  <Badge 
-                    className={lead.classification === "Important" ? "bg-orange-500" : "bg-blue-500"} 
-                    data-testid={`badge-classification-${lead._id}`}
-                  >
-                    {lead.classification}
-                  </Badge>
-                ) : (
-                  <span className="text-sm text-muted-foreground">-</span>
-                )}
               </TableCell>
               {isAdmin && (
                 <TableCell>
@@ -666,56 +653,30 @@ export default function Leads() {
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="rating"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Rating</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-lead-rating">
-                              <SelectValue placeholder="Select rating" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {leadRatings.map((rating) => (
-                              <SelectItem key={rating} value={rating}>
-                                {rating}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="classification"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Classification (Optional)</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-lead-classification">
-                              <SelectValue placeholder="Select classification" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {leadClassifications.map((classification) => (
-                              <SelectItem key={classification} value={classification}>
-                                {classification}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="rating"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rating</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-lead-rating">
+                            <SelectValue placeholder="Select rating" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {leadRatings.map((rating) => (
+                            <SelectItem key={rating} value={rating}>
+                              {rating}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="followUpDate"
